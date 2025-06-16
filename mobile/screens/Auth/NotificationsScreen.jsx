@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import api from '../api/api';
-import { colors, fonts } from '../styles/theme';
+import api from "../../services/api";
+import { colors, fonts } from '../../constants/theme';
 
 export default function NotificationsScreen() {
   const [notificacoes, setNotificacoes] = useState([]);

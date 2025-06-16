@@ -32,7 +32,7 @@ class UsuarioController {
   // Criar usuario
   async create(req, res) {
     try {
-      const daosd = req.body;
+      const dados = req.body;
       const novousuario = await UsuarioService.create(dados);
       res.status(201).json({ message: 'usuario criado', data: novousuario });
     } catch (error) {

@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Alert 
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import api from '../../services/api';
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({
@@ -10,10 +18,10 @@ export default function RegisterScreen() {
     confirmPassword: '',
     userType: 'patient' // 'patient', 'nutritionist' ou 'trainer'
   });
-  
+
   const navigation = useNavigation();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!form.name || !form.email || !form.password || !form.confirmPassword) {
       Alert.alert('Erro', 'Preencha todos os campos');
       return;
@@ -29,9 +37,26 @@ export default function RegisterScreen() {
       return;
     }
 
-    // Implemente o registro aqui
-    Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-    navigation.navigate('Login');
+    try {
+      const response = await api.post('/usuarios', {
+        id: form.id,
+        nome: form.name,
+        email: form.email,
+        senha: form.password,
+        papel: form.userType,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+        navigation.navigate('Login');
+      }
+    } catch (error) {
+      console.error('Erro no cadastro:', error.response?.data || error.message);
+      Alert.alert(
+        'Erro',
+        error.response?.data?.message || 'Ocorreu um erro no cadastro. Tente novamente.'
+      );
+    }
   };
 
   const userTypes = [
@@ -43,40 +68,47 @@ export default function RegisterScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Cadastro no ForNutri</Text>
-      
+
+      <TextInput
+        style={styles.input}
+        placeholder="CPF"
+        value={form.id}
+        onChangeText={(numeric) => setForm({ ...form, id:  numeric})}
+      />
+
       <TextInput
         style={styles.input}
         placeholder="Nome completo"
         value={form.name}
-        onChangeText={(text) => setForm({...form, name: text})}
+        onChangeText={(text) => setForm({ ...form, name: text })}
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={form.email}
-        onChangeText={(text) => setForm({...form, email: text})}
+        onChangeText={(text) => setForm({ ...form, email: text })}
         keyboardType="email-address"
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Senha"
         value={form.password}
-        onChangeText={(text) => setForm({...form, password: text})}
+        onChangeText={(text) => setForm({ ...form, password: text })}
         secureTextEntry
       />
-      
+
       <TextInput
         style={styles.input}
         placeholder="Confirmar Senha"
         value={form.confirmPassword}
-        onChangeText={(text) => setForm({...form, confirmPassword: text})}
+        onChangeText={(text) => setForm({ ...form, confirmPassword: text })}
         secureTextEntry
       />
-      
+
       <Text style={styles.sectionTitle}>Tipo de Usuário</Text>
-      
+
       <View style={styles.userTypeContainer}>
         {userTypes.map((type) => (
           <TouchableOpacity
@@ -85,22 +117,22 @@ export default function RegisterScreen() {
               styles.userTypeButton,
               form.userType === type.value && styles.selectedUserType
             ]}
-            onPress={() => setForm({...form, userType: type.value})}
+            onPress={() => setForm({ ...form, userType: type.value })}
           >
             <Text style={styles.userTypeText}>{type.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
-      
-      <TouchableOpacity 
+
+      <TouchableOpacity
         style={styles.primaryButton}
         onPress={handleRegister}
       >
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
-      
-      <TouchableOpacity 
-        onPress={() => navigation.navigate('Login')} // Navega para a tela de Login
+
+      <TouchableOpacity
+        onPress={() => navigation.navigate('Login')}
       >
         <Text style={styles.secondaryButtonText}>Já tem conta? Faça login</Text>
       </TouchableOpacity>
@@ -108,7 +140,6 @@ export default function RegisterScreen() {
   );
 }
 
-// Mantenha os mesmos styles da versão anterior
 
 const styles = StyleSheet.create({
   container: {
@@ -158,12 +189,6 @@ const styles = StyleSheet.create({
   userTypeText: {
     color: '#333333',
   },
-  separator: {
-    height: 1,
-    width: '100%',
-    backgroundColor: '#EEEEEE',
-    marginVertical: 24,
-  },
   primaryButton: {
     width: '100%',
     backgroundColor: '#2E7D32',
@@ -176,12 +201,6 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     fontSize: 16,
-  },
-  secondaryButton: {
-    width: '100%',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
   },
   secondaryButtonText: {
     color: '#2E7D32',
