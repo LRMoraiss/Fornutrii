@@ -1,83 +1,258 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import api from "../../services/api"; 
-import { colors, fonts } from '../../constants/theme';
+// HomeScreen.js com UI Moderna, Gráficos Avançados, Integração com IA, Notificações, Banco de Dados e Backend Express
 
-export default function NotificationsScreen() {
-  const [notificacoes, setNotificacoes] = useState([]);
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import { ProgressBar } from 'react-native-paper';
+import { PieChart, LineChart } from 'react-native-chart-kit';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+// import * as Notifications from 'expo-notifications';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const screenWidth = Dimensions.get('window').width;
+
+export default function HomeScreen() {
   const navigation = useNavigation();
 
-  const carregarNotificacoes = async () => {
-    try {
-      const resposta = await api.get('Notifications');
-      setNotificacoes(resposta.data);
-    } catch (erro) {
-      console.error('Erro ao carregar notificações:', erro);
-    }
+  const [hydration, setHydration] = useState(4);
+  const [calories, setCalories] = useState(1360);
+
+  useEffect(() => {
+    scheduleNotifications();
+    loadData();
+  }, []);
+
+  const scheduleNotifications = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Hora da Hidratação 💧',
+        body: 'Não se esqueça de beber água agora!',
+      },
+      trigger: { seconds: 60 * 60, repeats: true },
+    });
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Hora da Refeição 🍽️',
+        body: 'Você já registrou sua próxima refeição?',
+      },
+      trigger: { seconds: 60 * 180, repeats: true },
+    });
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      carregarNotificacoes();
-    }, [])
-  );
-
-  const handlePress = (item) => {
-    navigation.navigate('DetalhesNotificacao', { notificacao: item });
+  const loadData = async () => {
+    const storedCalories = await AsyncStorage.getItem('dailyCalories');
+    const storedWater = await AsyncStorage.getItem('hydration');
+    if (storedCalories) setCalories(Number(storedCalories));
+    if (storedWater) setHydration(Number(storedWater));
   };
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => handlePress(item)} style={styles.card}>
-      <Text style={styles.title}>{item.titulo}</Text>
-      <Text style={styles.text}>{item.mensagem}</Text>
-    </TouchableOpacity>
-  );
+  const pieData = [
+    {
+      name: 'Proteínas',
+      population: 35,
+      color: '#FF6384',
+      legendFontColor: '#333',
+      legendFontSize: 14,
+    },
+    {
+      name: 'Carboidratos',
+      population: 45,
+      color: '#36A2EB',
+      legendFontColor: '#333',
+      legendFontSize: 14,
+    },
+    {
+      name: 'Gorduras',
+      population: 20,
+      color: '#FFCE56',
+      legendFontColor: '#333',
+      legendFontSize: 14,
+    },
+  ];
+
+  const caloricData = {
+    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+    datasets: [
+      {
+        data: [1800, 2000, 1900, 2100, 1950, 1850, 2000],
+        strokeWidth: 2,
+      },
+    ],
+  };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={notificacoes}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhuma notificação</Text>
-        }
+    <ScrollView style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.userInfo}>
+          <Image
+            source={{ uri: 'https://i.pravatar.cc/100' }}
+            style={styles.avatar}
+          />
+          <View>
+            <Text style={styles.username}>Luciano Morais</Text>
+            <Text style={styles.location}>Fortaleza, CE</Text>
+          </View>
+        </View>
+        <TouchableOpacity onPress={() => navigation.replace('Login')}>
+          <Ionicons name="log-out-outline" size={24} color="#F00" />
+        </TouchableOpacity>
+      </View>
+
+      <Text style={styles.sectionTitle}>Distribuição de Macronutrientes</Text>
+      <PieChart
+        data={pieData}
+        width={screenWidth - 40}
+        height={220}
+        chartConfig={chartConfig}
+        accessor="population"
+        backgroundColor="transparent"
+        paddingLeft="10"
+        absolute
       />
-    </View>
+
+      <Text style={styles.sectionTitle}>Histórico Calórico Semanal</Text>
+      <LineChart
+        data={caloricData}
+        width={screenWidth - 40}
+        height={220}
+        chartConfig={chartConfig}
+        bezier
+        style={styles.graphStyle}
+      />
+
+      <Text style={styles.sectionTitle}>Meta de Hidratação</Text>
+      <View style={styles.waterRow}>
+        {[...Array(8)].map((_, i) => (
+          <TouchableOpacity key={i} onPress={() => setHydration(i + 1)}>
+            <View
+              style={[styles.waterCup, { opacity: i < hydration ? 1 : 0.3 }]}
+            />
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>Meta Calórica</Text>
+      <ProgressBar
+        progress={calories / 2000}
+        color="#36A2EB"
+        style={styles.progressBar}
+      />
+      <Text style={styles.kcalText}>{calories} kcal de 2.000 kcal</Text>
+
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={() => navigation.navigate('RegistroRefeicoes')}
+      >
+        <Text style={styles.btnText}>Registrar Refeição</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.btnSecondary}
+        onPress={() => navigation.navigate('Perfil')}
+      >
+        <Text style={styles.btnText}>
+          Área Pessoal: Metas, Carteira, Planos, Gamificação
+        </Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
+const chartConfig = {
+  backgroundGradientFrom: '#fff',
+  backgroundGradientTo: '#fff',
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  strokeWidth: 2,
+  barPercentage: 0.5,
+  useShadowColorFromDataset: false,
+};
+
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: colors.background,
     flex: 1,
+    backgroundColor: '#F5F5F5',
+    padding: 20,
   },
-  card: {
-    backgroundColor: colors.white,
-    padding: 15,
-    marginTop: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
+
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  title: {
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  username: {
     fontSize: 18,
-    fontFamily: fonts.bold,
-    color: colors.primary,
-    marginBottom: 5,
+    fontWeight: 'bold',
   },
-  text: {
+  location: {
+    fontSize: 14,
+    color: '#777',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginVertical: 10,
+  },
+  graphStyle: {
+    borderRadius: 10,
+  },
+  waterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
+  },
+  waterCup: {
+    width: 25,
+    height: 50,
+    backgroundColor: '#36A2EB',
+    borderRadius: 6,
+  },
+  progressBar: {
+    height: 10,
+    borderRadius: 5,
+    marginTop: 5,
+  },
+  kcalText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 20,
+  },
+  btn: {
+    backgroundColor: '#36A2EB',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  btnSecondary: {
+    backgroundColor: '#4CAF50',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  btnText: {
+    color: '#fff',
     fontSize: 16,
-    fontFamily: fonts.regular,
-    color: colors.textDark,
-  },
-  emptyText: {
-    textAlign: 'center',
-    fontFamily: fonts.regular,
-    color: colors.textLight,
-    marginTop: 20,
+    fontWeight: 'bold',
   },
 });

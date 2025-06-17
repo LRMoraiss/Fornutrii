@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Alert 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import api from '../../services/api';
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({
+    id: '', // ✅ adicionado para evitar warning de input não controlado
     name: '',
     email: '',
     password: '',
@@ -22,7 +23,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleRegister = async () => {
-    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
+    if (!form.name || !form.email || !form.password || !form.confirmPassword || !form.id) {
       Alert.alert('Erro', 'Preencha todos os campos');
       return;
     }
@@ -73,7 +74,7 @@ export default function RegisterScreen() {
         style={styles.input}
         placeholder="CPF"
         value={form.id}
-        onChangeText={(numeric) => setForm({ ...form, id:  numeric})}
+        onChangeText={(text) => setForm({ ...form, id: text })}
       />
 
       <TextInput
@@ -124,22 +125,16 @@ export default function RegisterScreen() {
         ))}
       </View>
 
-      <TouchableOpacity
-        style={styles.primaryButton}
-        onPress={handleRegister}
-      >
+      <TouchableOpacity style={styles.primaryButton} onPress={handleRegister}>
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate('Login')}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text style={styles.secondaryButtonText}>Já tem conta? Faça login</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

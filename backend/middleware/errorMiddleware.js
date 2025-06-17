@@ -4,5 +4,4 @@ class ErrorHandler {
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 }
-
 module.exports = ErrorHandler;

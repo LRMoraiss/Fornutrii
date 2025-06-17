@@ -2,6 +2,7 @@ const express = require('express');
 const controller = require('../controllers/usuarioController');
 const ValidateUsuario = require('../middleware/validateUsuario');
 
+
 class UsuarioRoutes {
   constructor() {
     this.router = express.Router();
@@ -131,6 +132,8 @@ class UsuarioRoutes {
      *         description: Usuario removido com sucesso
      */
     this.router.delete('/:id', controller.remove);
+
+    
   }
 
   getRouter() {

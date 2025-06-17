@@ -6,6 +6,7 @@ const usuarioRoutes = require('./routes/usuarioRoutes');
 const dbInit = require('./db/dbInit');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger/swaggerConfig');
+const authRoutes = require('./routes/authRoutes');
 
 class Server {
   constructor() {
@@ -27,7 +28,7 @@ class Server {
 
   routes() {
     this.app.use('/usuarios', usuarioRoutes);
-
+    this.app.use('/auth', authRoutes);
     this.app.get('/', (req, res) => {
       res.send('API de usuarios está funcionando!');
     });
