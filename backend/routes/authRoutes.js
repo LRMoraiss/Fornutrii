@@ -32,6 +32,35 @@ class AuthRoutes {
      *         description: Credenciais inválidas
      */
     this.router.post('/login', authController.login);
+
+    /**
+     * @swagger
+     * /auth/register:
+     *   post:
+     *     summary: Cadastro de novo usuário
+     *     tags: [Auth]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               nome:
+     *                 type: string
+     *               email:
+     *                 type: string
+     *               senha:
+     *                 type: string
+     *               papel:
+     *                 type: string
+     *     responses:
+     *       201:
+     *         description: Usuário cadastrado com sucesso
+     *       400:
+     *         description: Erro no cadastro
+     */
+    this.router.post('/register', authController.register);
   }
 }
 
