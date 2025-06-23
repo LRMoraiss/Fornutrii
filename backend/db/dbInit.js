@@ -7,7 +7,7 @@ const createTable = async () => {
     if (result.rows[0].to_regclass === null) {
       const createQuery = `
         CREATE TABLE usuario (
-          id SERIAL PRIMARY KEY,
+          id VARCHAR(11) PRIMARY KEY,
           nome VARCHAR(255) NOT NULL,
           email VARCHAR(255) NOT NULL,
           senha VARCHAR(255) NOT NULL,

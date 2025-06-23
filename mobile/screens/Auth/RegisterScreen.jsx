@@ -5,36 +5,76 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import api from '../../services/api';
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({
-    id: '', // ✅ adicionado para evitar warning de input não controlado
+    id: '',
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    userType: 'patient' // 'patient', 'nutritionist' ou 'trainer'
+    userType: 'patient',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
 
+  const isValidEmailDomain = (email) => {
+    const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
+    const domain = email.split('@')[1];
+    return allowedDomains.includes(domain);
+  };
+
+  const isStrongPassword = (password) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    return regex.test(password);
+  };
+
   const handleRegister = async () => {
-    if (!form.name || !form.email || !form.password || !form.confirmPassword || !form.id) {
-      Alert.alert('Erro', 'Preencha todos os campos');
-      return;
+    const newErrors = {};
+
+    if (!form.name) newErrors.name = true;
+    if (!form.email) {
+      newErrors.email = true;
+    } else if (!isValidEmailDomain(form.email)) {
+      newErrors.email = true;
+      Alert.alert(
+        'Erro no Email',
+        'O email deve ser dos domínios: gmail, hotmail, outlook ou yahoo.'
+      );
     }
 
-    if (form.password !== form.confirmPassword) {
+    if (!form.password) {
+      newErrors.password = true;
+    } else if (!isStrongPassword(form.password)) {
+      newErrors.password = true;
+      Alert.alert(
+        'Senha fraca',
+        'A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.'
+      );
+    }
+
+    if (!form.confirmPassword) {
+      newErrors.confirmPassword = true;
+    } else if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = true;
       Alert.alert('Erro', 'As senhas não coincidem');
-      return;
     }
 
-    if (form.password.length < 6) {
-      Alert.alert('Erro', 'A senha deve ter pelo menos 6 caracteres');
+    if (!form.id) newErrors.id = true;
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
       return;
     }
 
@@ -63,7 +103,7 @@ export default function RegisterScreen() {
   const userTypes = [
     { label: 'Paciente', value: 'patient' },
     { label: 'Nutricionista', value: 'nutritionist' },
-    { label: 'Educador Físico', value: 'trainer' }
+    { label: 'Educador Físico', value: 'trainer' },
   ];
 
   return (
@@ -71,42 +111,75 @@ export default function RegisterScreen() {
       <Text style={styles.title}>Cadastro no ForNutri</Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors.id && styles.inputError]}
         placeholder="CPF"
         value={form.id}
         onChangeText={(text) => setForm({ ...form, id: text })}
       />
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors.name && styles.inputError]}
         placeholder="Nome completo"
         value={form.name}
         onChangeText={(text) => setForm({ ...form, name: text })}
       />
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors.email && styles.inputError]}
         placeholder="Email"
         value={form.email}
         onChangeText={(text) => setForm({ ...form, email: text })}
         keyboardType="email-address"
       />
+      <Text style={styles.infoText}>
+        Aceitamos apenas emails @gmail.com, @hotmail.com, @outlook.com e @yahoo.com
+      </Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        value={form.password}
-        onChangeText={(text) => setForm({ ...form, password: text })}
-        secureTextEntry
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[styles.input, styles.passwordInput, errors.password && styles.inputError]}
+          placeholder="Senha"
+          value={form.password}
+          onChangeText={(text) => setForm({ ...form, password: text })}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Ionicons
+            name={showPassword ? 'eye' : 'eye-off'}
+            size={24}
+            color="gray"
+          />
+        </TouchableOpacity>
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Confirmar Senha"
-        value={form.confirmPassword}
-        onChangeText={(text) => setForm({ ...form, confirmPassword: text })}
-        secureTextEntry
-      />
+      <Text style={styles.infoText}>
+        A senha deve ter pelo menos 8 caracteres, incluindo:
+        {'\n'}- 1 letra maiúscula
+        {'\n'}- 1 letra minúscula
+        {'\n'}- 1 número
+        {'\n'}- 1 caractere especial
+      </Text>
+
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[
+            styles.input,
+            styles.passwordInput,
+            errors.confirmPassword && styles.inputError,
+          ]}
+          placeholder="Confirmar Senha"
+          value={form.confirmPassword}
+          onChangeText={(text) => setForm({ ...form, confirmPassword: text })}
+          secureTextEntry={!showConfirmPassword}
+        />
+        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+          <Ionicons
+            name={showConfirmPassword ? 'eye' : 'eye-off'}
+            size={24}
+            color="gray"
+          />
+        </TouchableOpacity>
+      </View>
 
       <Text style={styles.sectionTitle}>Tipo de Usuário</Text>
 
@@ -116,7 +189,7 @@ export default function RegisterScreen() {
             key={type.value}
             style={[
               styles.userTypeButton,
-              form.userType === type.value && styles.selectedUserType
+              form.userType === type.value && styles.selectedUserType,
             ]}
             onPress={() => setForm({ ...form, userType: type.value })}
           >
@@ -149,18 +222,28 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   input: {
+    flex: 1,
     height: 48,
     borderWidth: 1,
     borderColor: '#DDDDDD',
     borderRadius: 8,
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 8,
     fontSize: 16,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  infoText: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 8,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333333',
+    marginTop: 16,
     marginBottom: 12,
   },
   userTypeContainer: {
@@ -200,5 +283,12 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: '#2E7D32',
     fontWeight: 'bold',
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  passwordInput: {
+    marginRight: 8,
   },
 });

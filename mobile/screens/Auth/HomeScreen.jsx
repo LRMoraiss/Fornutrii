@@ -1,5 +1,3 @@
-// HomeScreen.js com UI Moderna, Gráficos Avançados, Integração com IA, Notificações, Banco de Dados e Backend Express
-
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -24,28 +22,20 @@ export default function HomeScreen() {
 
   const [hydration, setHydration] = useState(4);
   const [calories, setCalories] = useState(1360);
+  const [userName, setUserName] = useState('');
+  const [userPhoto, setUserPhoto] = useState(null);
 
   useEffect(() => {
-    scheduleNotifications();
+    // scheduleNotifications(); // Se quiser ativar notificação, importe e descomente
+    carregarDadosUsuario();
     loadData();
   }, []);
 
-  const scheduleNotifications = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Hora da Hidratação 💧',
-        body: 'Não se esqueça de beber água agora!',
-      },
-      trigger: { seconds: 60 * 60, repeats: true },
-    });
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Hora da Refeição 🍽️',
-        body: 'Você já registrou sua próxima refeição?',
-      },
-      trigger: { seconds: 60 * 180, repeats: true },
-    });
+  const carregarDadosUsuario = async () => {
+    const nome = await AsyncStorage.getItem('userName');
+    const foto = await AsyncStorage.getItem('userPhoto');
+    if (nome) setUserName(nome);
+    if (foto) setUserPhoto(foto);
   };
 
   const loadData = async () => {
@@ -94,15 +84,18 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <View style={styles.userInfo}>
           <Image
-            source={{ uri: 'https://i.pravatar.cc/100' }}
+            source={userPhoto ? { uri: userPhoto } : { uri: 'https://i.pravatar.cc/100' }}
             style={styles.avatar}
           />
           <View>
-            <Text style={styles.username}>Luciano Morais</Text>
+            <Text style={styles.username}>{userName || 'Usuário'}</Text>
             <Text style={styles.location}>Fortaleza, CE</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.replace('Login')}>
+        <TouchableOpacity onPress={async () => {
+          await AsyncStorage.clear();
+          navigation.replace('Login');
+        }}>
           <Ionicons name="log-out-outline" size={24} color="#F00" />
         </TouchableOpacity>
       </View>

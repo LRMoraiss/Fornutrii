@@ -1,5 +1,6 @@
 const UsuarioService = require('../services/usuarioService');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 class AuthController {
   async login(req, res) {
@@ -14,12 +15,14 @@ class AuthController {
         return res.status(400).json({ error: 'Usuário ou senha inválidos' });
       }
 
-      if (senha !== usuario.senha) {
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+
+      if (!senhaValida) {
         return res.status(400).json({ error: 'Senha incorreta' });
       }
 
       const token = jwt.sign(
-        { id: usuario.id, email: usuario.email },
+        { id: usuario.id, email: usuario.email, papel: usuario.papel },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
       );
@@ -30,8 +33,8 @@ class AuthController {
           id: usuario.id,
           nome: usuario.nome,
           email: usuario.email,
-          papel: usuario.papel
-        }
+          papel: usuario.papel,
+        },
       });
     } catch (error) {
       console.error('Erro no login:', error);
