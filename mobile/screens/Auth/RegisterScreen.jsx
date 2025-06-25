@@ -225,7 +225,13 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 32, backgroundColor: '#FFFFFF' },
-  title: { fontSize: 20, fontWeight: 'bold', color: '#2E7D32', marginBottom: 24 },
+  title: {
+  fontSize: 20,
+  fontWeight: 'bold',
+  color: '#2E7D32',
+  marginBottom: 24,
+  textAlign: 'center', // Adicionado
+},
   input: {
     flex: 1,
     height: 48,
@@ -273,7 +279,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
-  secondaryButtonText: { color: '#2E7D32', fontWeight: 'bold' },
+  secondaryButtonText: {
+  color: '#2E7D32',
+  fontWeight: 'bold',
+  textAlign: 'center', // Adicionado
+  marginTop: 8,        // Opcional para distanciar do botão
+},
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
