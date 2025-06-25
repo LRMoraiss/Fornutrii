@@ -1,26 +1,38 @@
 const db = require('./db');
 
-const createTable = async () => {
-  const checkTableQuery = `SELECT to_regclass('public.usuario');`;
+async function dbInit() {
   try {
-    const result = await db.query(checkTableQuery);
-    if (result.rows[0].to_regclass === null) {
-      const createQuery = `
-        CREATE TABLE usuario (
-          id VARCHAR(11) PRIMARY KEY,
-          nome VARCHAR(255) NOT NULL,
-          email VARCHAR(255) NOT NULL,
-          senha VARCHAR(255) NOT NULL,
-          papel VARCHAR(100) NOT NULL
-        );`;
-      await db.query(createQuery);
-      console.log('Tabela "usuario" criada com sucesso!');
-    } else {
-      console.log('Tabela "usuario" já existe.');
-    }
-  } catch (err) {
-    console.error('Erro ao criar tabela "usuario":', err.message);
-  }
-};
+    // Tabela usuario com CPF como id
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS usuario (
+        id CHAR(11) PRIMARY KEY,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        senha TEXT NOT NULL,
+        papel TEXT NOT NULL,
+        cadastro_completo BOOLEAN DEFAULT FALSE
+      );
+    `);
 
-module.exports = createTable;
+    // Tabela perfil_nutricional usando CPF como chave estrangeira
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS perfil_nutricional (
+        id SERIAL PRIMARY KEY,
+        usuario_id CHAR(11) UNIQUE NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+        peso REAL,
+        altura REAL,
+        idade INTEGER,
+        foto TEXT,
+        objetivo TEXT,
+        restricoes TEXT
+      );
+    `);
+
+    console.log('Tabelas criadas/verificadas com sucesso');
+  } catch (err) {
+    console.error('Erro ao criar tabelas:', err);
+    throw err;
+  }
+}
+
+module.exports = dbInit;

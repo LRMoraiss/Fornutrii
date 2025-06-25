@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -34,31 +34,30 @@ export default function LoginScreen() {
       const userData = await login(email, senha);
       console.log('Login realizado:', userData);
 
-      // Salvar dados básicos do usuário no AsyncStorage
-      await AsyncStorage.setItem('userName', userData.name || '');
-      await AsyncStorage.setItem('userPhoto', userData.photo || '');
+      await AsyncStorage.setItem('userId', userData.id);
+      await AsyncStorage.setItem('userName', userData.nome);
+      await AsyncStorage.setItem('userEmail', userData.email);
+      await AsyncStorage.setItem('token', userData.token);
 
-      // Buscar se cadastro está completo (string 'true' ou 'false')
-      const cadastro = await AsyncStorage.getItem('cadastroCompleto');
-      const cadastroCompleto = cadastro === 'true';
+      const cadastroCompleto = userData.cadastro_completo;
 
       if (cadastroCompleto) {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }]
+          routes: [{ name: 'Home' }],
         });
       } else {
         navigation.reset({
           index: 0,
-          routes: [{ name: 'CompleteCadastro' }]
+          routes: [{ name: 'CompleteCadastro' }],
         });
       }
-
     } catch (error) {
-      let msg = error.message.includes('500')
-        ? 'Erro no servidor'
-        : 'E-mail ou senha incorretos';
-      Alert.alert('Erro', msg);
+      console.log('Erro no login:', error);
+      Alert.alert(
+        'Erro',
+        error.response?.data?.message || 'E-mail ou senha incorretos'
+      );
     } finally {
       setLoading(false);
     }

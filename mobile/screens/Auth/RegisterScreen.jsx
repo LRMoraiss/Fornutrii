@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -23,10 +23,19 @@ export default function RegisterScreen() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [errors, setErrors] = useState({});
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [isSuccess]);
 
   const isValidEmailDomain = (email) => {
     const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
@@ -73,13 +82,10 @@ export default function RegisterScreen() {
     if (!form.id) newErrors.id = true;
 
     setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(newErrors).length > 0) return;
 
     try {
-      const response = await api.post('/usuarios', {
+      const response = await api.post('/usuario', {
         id: form.id,
         nome: form.name,
         email: form.email,
@@ -88,8 +94,20 @@ export default function RegisterScreen() {
       });
 
       if (response.status === 201 || response.status === 200) {
-        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-        navigation.navigate('Login');
+        Alert.alert(
+          'Sucesso',
+          'Cadastro realizado com sucesso!',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                console.log('Usuário clicou em OK');
+                setIsSuccess(true);
+              },
+            },
+          ],
+          { cancelable: false }
+        );
       }
     } catch (error) {
       console.error('Erro no cadastro:', error.response?.data || error.message);
@@ -162,11 +180,7 @@ export default function RegisterScreen() {
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[
-            styles.input,
-            styles.passwordInput,
-            errors.confirmPassword && styles.inputError,
-          ]}
+          style={[styles.input, styles.passwordInput, errors.confirmPassword && styles.inputError]}
           placeholder="Confirmar Senha"
           value={form.confirmPassword}
           onChangeText={(text) => setForm({ ...form, confirmPassword: text })}
@@ -210,17 +224,8 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 32,
-    backgroundColor: '#FFFFFF',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 24,
-  },
+  container: { flex: 1, padding: 32, backgroundColor: '#FFFFFF' },
+  title: { fontSize: 20, fontWeight: 'bold', color: '#2E7D32', marginBottom: 24 },
   input: {
     flex: 1,
     height: 48,
@@ -231,14 +236,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 16,
   },
-  inputError: {
-    borderColor: 'red',
-  },
-  infoText: {
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 8,
-  },
+  inputError: { borderColor: 'red' },
+  infoText: { fontSize: 12, color: '#666666', marginBottom: 8 },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '500',
@@ -264,9 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     borderColor: '#2E7D32',
   },
-  userTypeText: {
-    color: '#333333',
-  },
+  userTypeText: { color: '#333333' },
   primaryButton: {
     width: '100%',
     backgroundColor: '#2E7D32',
@@ -275,20 +272,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  secondaryButtonText: {
-    color: '#2E7D32',
-    fontWeight: 'bold',
-  },
+  buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
+  secondaryButtonText: { color: '#2E7D32', fontWeight: 'bold' },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  passwordInput: {
-    marginRight: 8,
-  },
+  passwordInput: { marginRight: 8 },
 });

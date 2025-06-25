@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { API_URL } from 'env'; 
 import {
   View,
   Text,
@@ -9,102 +10,202 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image
+  Image,
+  ActivityIndicator
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
+
+
 export default function CompleteCadastro() {
   const navigation = useNavigation();
-
-  const [peso, setPeso] = useState('');
-  const [altura, setAltura] = useState('');
-  const [idade, setIdade] = useState('');
-  const [foto, setFoto] = useState(null); // Para upload da foto, pode usar expo-image-picker
-  const [questionario, setQuestionario] = useState({
-    // Exemplo de perguntas, adapte conforme necessário
-    atividadeFisica: '',
-    alergias: '',
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    peso: '',
+    altura: '',
+    idade: '',
+    foto: null,
     objetivo: '',
+    restricoes: ''
   });
 
-  const handleSalvar = async () => {
-    if (!peso || !altura || !idade) {
-      Alert.alert('Erro', 'Por favor, preencha os campos obrigatórios');
-      return;
-    }
-    // Aqui você pode salvar no backend ou localStorage o cadastro completo do usuário
-    // Por simplicidade, vamos marcar o cadastro como completo no AsyncStorage
-    await AsyncStorage.setItem('cadastroCompleto', 'true');
-    // Opcional: salvar peso, altura, idade, foto e questionário no AsyncStorage ou backend
+  useEffect(() => {
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão necessária', 'Precisamos acessar sua galeria para adicionar uma foto.');
+      }
+    })();
+  }, []);
 
-    Alert.alert('Sucesso', 'Cadastro completo!');
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Home' }],
-    });
+  const escolherFoto = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled) {
+        setForm({ ...form, foto: result.assets[0].uri });
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar imagem:', error);
+      Alert.alert('Erro', 'Não foi possível selecionar a imagem');
+    }
   };
 
-  // Aqui você pode implementar a função para escolher foto usando expo-image-picker
+  const handleSalvar = async () => {
+    if (!form.peso || !form.altura || !form.idade) {
+      Alert.alert('Atenção', 'Preencha todos os campos obrigatórios');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const token = await AsyncStorage.getItem('@ForNutri:token');
+      const user = JSON.parse(await AsyncStorage.getItem('@ForNutri:user'));
+
+      // Upload da foto se existir
+      let fotoUrl = form.foto;
+      if (form.foto) {
+        const formData = new FormData();
+        formData.append('foto', {
+          uri: form.foto,
+          name: 'foto.jpg',
+          type: 'image/jpeg'
+        });
+
+        const uploadResponse = await fetch(`${API_URL}/api/upload`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) throw new Error('Falha no upload da foto');
+        
+        const uploadData = await uploadResponse.json();
+        fotoUrl = uploadData.url;
+      }
+
+      // Envia dados do cadastro completo
+      const response = await fetch(`${API_URL}/api/cadastro/completar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          usuario_id: user.id,
+          peso: parseFloat(form.peso),
+          altura: parseFloat(form.altura),
+          idade: parseInt(form.idade),
+          foto: fotoUrl,
+          objetivo: form.objetivo,
+          restricoes: form.restricoes
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao completar cadastro');
+      }
+
+      // Atualiza o usuário no AsyncStorage
+      const updatedUser = { ...user, cadastro_completo: true };
+      await AsyncStorage.setItem('@ForNutri:user', JSON.stringify(updatedUser));
+
+      Alert.alert('Sucesso', 'Cadastro completo realizado com sucesso!');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
+    } catch (error) {
+      console.error('Erro no cadastro completo:', error);
+      Alert.alert('Erro', error.message || 'Não foi possível completar o cadastro');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Complete seu Cadastro</Text>
 
+        <Text style={styles.label}>Peso (kg)*</Text>
         <TextInput
-          placeholder="Peso (kg)"
-          keyboardType="numeric"
-          value={peso}
-          onChangeText={setPeso}
           style={styles.input}
-        />
-        <TextInput
-          placeholder="Altura (cm)"
+          placeholder="Ex: 70.5"
           keyboardType="numeric"
-          value={altura}
-          onChangeText={setAltura}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Idade"
-          keyboardType="numeric"
-          value={idade}
-          onChangeText={setIdade}
-          style={styles.input}
+          value={form.peso}
+          onChangeText={(text) => setForm({ ...form, peso: text })}
         />
 
-        {/* Aqui o botão para escolher foto - implementa depois com expo-image-picker */}
-        <TouchableOpacity style={styles.btnFoto} onPress={() => Alert.alert('Funcionalidade', 'Implementar escolha de foto')}>
-          <Text style={styles.btnText}>Escolher Foto</Text>
+        <Text style={styles.label}>Altura (cm)*</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: 175"
+          keyboardType="numeric"
+          value={form.altura}
+          onChangeText={(text) => setForm({ ...form, altura: text })}
+        />
+
+        <Text style={styles.label}>Idade*</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: 30"
+          keyboardType="numeric"
+          value={form.idade}
+          onChangeText={(text) => setForm({ ...form, idade: text })}
+        />
+
+        <Text style={styles.label}>Foto de Perfil</Text>
+        <TouchableOpacity style={styles.fotoButton} onPress={escolherFoto}>
+          <Text style={styles.fotoButtonText}>
+            {form.foto ? 'Alterar Foto' : 'Adicionar Foto'}
+          </Text>
         </TouchableOpacity>
-        {foto && <Image source={{ uri: foto }} style={styles.fotoPreview} />}
+        
+        {form.foto && (
+          <Image source={{ uri: form.foto }} style={styles.fotoPreview} />
+        )}
 
-        {/* Questionário simplificado */}
+        <Text style={styles.label}>Objetivo</Text>
         <TextInput
-          placeholder="Atividade física"
-          value={questionario.atividadeFisica}
-          onChangeText={text => setQuestionario({...questionario, atividadeFisica: text})}
           style={styles.input}
-        />
-        <TextInput
-          placeholder="Alergias alimentares"
-          value={questionario.alergias}
-          onChangeText={text => setQuestionario({...questionario, alergias: text})}
-          style={styles.input}
-        />
-        <TextInput
-          placeholder="Objetivo (ex: perder peso, ganhar massa)"
-          value={questionario.objetivo}
-          onChangeText={text => setQuestionario({...questionario, objetivo: text})}
-          style={styles.input}
+          placeholder="Ex: Perder peso, ganhar massa muscular"
+          value={form.objetivo}
+          onChangeText={(text) => setForm({ ...form, objetivo: text })}
         />
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSalvar}>
-          <Text style={styles.saveButtonText}>Salvar</Text>
+        <Text style={styles.label}>Restrições Alimentares</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Ex: Lactose, glúten"
+          value={form.restricoes}
+          onChangeText={(text) => setForm({ ...form, restricoes: text })}
+        />
+
+        <TouchableOpacity 
+          style={styles.saveButton} 
+          onPress={handleSalvar}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text style={styles.saveButtonText}>Salvar Cadastro</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -112,45 +213,68 @@ export default function CompleteCadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  scrollContainer: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  scrollContainer: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    color: '#333333',
+    marginBottom: 8,
+    fontWeight: '500',
+  },
   input: {
+    backgroundColor: '#FFFFFF',
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#DDDDDD',
     borderRadius: 8,
+    paddingHorizontal: 16,
     marginBottom: 16,
-    paddingHorizontal: 10,
+    fontSize: 16,
   },
-  btnFoto: {
+  fotoButton: {
     backgroundColor: '#2E7D32',
-    padding: 14,
+    padding: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,
   },
-  btnText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  fotoButtonText: {
+    color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   fotoPreview: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     alignSelf: 'center',
     marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#2E7D32',
   },
   saveButton: {
     backgroundColor: '#2E7D32',
     padding: 16,
     borderRadius: 8,
     alignItems: 'center',
+    marginTop: 16,
   },
   saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

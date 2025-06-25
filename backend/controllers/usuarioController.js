@@ -32,9 +32,11 @@ class UsuarioController {
   // Criar usuario
   async create(req, res) {
     try {
-      const dados = req.body;
-      const novousuario = await UsuarioService.create(dados);
-      res.status(201).json({ message: 'usuario criado', data: novousuario });
+      const { id, nome, email, senha, papel } = req.body;
+      if (!id || id.length !== 11) {
+        return res.status(400).json({ error: 'CPF inválido. Deve conter 11 dígitos.' });
+      }
+      const novousuario = await UsuarioService.create({ id, nome, email, senha, papel });
     } catch (error) {
       console.error('Erro ao criar usuario:', error);
       res.status(500).json({ error: 'Erro ao criar usuario.' });
@@ -75,6 +77,17 @@ class UsuarioController {
       res.status(500).json({ error: 'Erro ao remover usuario.' });
     }
   }
+
+  async completeRegistration(req, res) {
+  try {
+    const { id } = req.params;
+    const dados = req.body;
+    const usuario = await UsuarioService.completeRegistration(id, dados);
+    res.status(200).json(usuario);
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao completar cadastro' });
+  }
+}
 }
 
 module.exports = new UsuarioController();
