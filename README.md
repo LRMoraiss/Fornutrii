@@ -1,194 +1,167 @@
 
+# 🥗 App for Nutri
+
+## 📋 Sobre o Projeto
+
+O **App for Nutri** é uma aplicação mobile voltada para nutricionistas e pacientes, permitindo o gerenciamento de perfis, objetivos alimentares, restrições, dados de saúde (peso, altura, idade) e upload de foto de perfil. O sistema oferece uma experiência intuitiva para cadastro, login e acompanhamento dos dados, com segurança baseada em autenticação JWT.
+
+O projeto é dividido em:
+
+- **Backend**: API REST em Node.js com Express e PostgreSQL.
+- **Frontend Mobile**: Aplicativo desenvolvido com React Native e Expo Go.
 
 ---
 
-## 🚀 **Passo a Passo de Instalação com Comandos**
+## 🚀 Tecnologias Utilizadas
 
-### **1. Backend: Node.js + MongoDB + JWT + Express**
+### 🔧 Backend
+- Node.js
+- Express
+- PostgreSQL
+- JWT (JSON Web Token)
+- Dotenv
+- Bcrypt
+- Morgan
+- CORS
+- Swagger (para documentação da API)
+- Upload de imagens com `express-fileupload`
 
-#### 1.1 **Criando e Configurando o Backend**
+#### 📦 Dependências instaladas:
 
-1. **Criar diretório do backend**:
-
-   ```bash
-   mkdir backend
-   cd backend
-   ```
-
-2. **Inicializar o projeto Node.js**:
-
-   ```bash
-   npm init -y
-   ```
-
-3. **Instalar dependências necessárias**:
-
-   ```bash
-   npm install express mongoose dotenv cors bcryptjs jsonwebtoken nodemailer
-   ```
-
-4. **Instalar dependências para desenvolvimento (nodemon)**:
-
-   ```bash
-   npm install --save-dev nodemon
-   ```
-
-5. **Estrutura de Diretórios**:
-   Agora, crie a estrutura de pastas para seu projeto backend:
-
-   ```bash
-   mkdir src
-   cd src
-   mkdir controllers middlewares models routes
-   ```
-
-6. **Criar o arquivo principal `app.js`**:
-   No diretório `src`, crie o arquivo `app.js`:
-
-   ```bash
-   touch app.js
-   ```
-
-7. **Criar o arquivo de servidor `server.js`**:
-   No diretório `src`, crie o arquivo `server.js`:
-
-   ```bash
-   touch server.js
-   ```
-
----
-
-#### 1.2 **Configurar o `.env`**
-
-1. **Criar o arquivo `.env` na raiz do backend**:
-   Este arquivo conterá as variáveis de ambiente (como o MongoDB URI e a chave secreta JWT).
-
-   No diretório raiz do seu projeto, crie o arquivo `.env`:
-
-   ```bash
-   touch .env
-   ```
-
-2. **Adicionar variáveis de ambiente** no arquivo `.env`:
-
-   ```plaintext
-   MONGO_URI=mongodb://localhost:27017/nome_do_banco
-   JWT_SECRET=sua_chave_secreta
-   ```
-
-   * **MONGO\_URI**: A URL de conexão com o MongoDB (se for usar o MongoDB Atlas, pegue a URL de lá).
-   * **JWT\_SECRET**: A chave secreta para assinar os tokens JWT.
-
---
-2. **Rodar o backend**:
-
-   ```bash
-   npm run dev
-   ```
-
-O servidor agora estará rodando na porta `3333`.
-
----
-
-### **2. Frontend: React Native com Expo Go**
-
-#### 2.1 **Criar o diretório e inicializar o projeto com Expo**
-
-1. **Criar o diretório do frontend**:
-
-   ```bash
-   mkdir frontend
-   cd frontend
-   ```
-
-2. **Inicializar o projeto React Native com Expo**:
-
-   ```bash
-   expo init .
-   ```
-
-   Escolha um template como **blank**.
-
-#### 2.2 **Instalar Dependências Necessárias**
-
-Instale as dependências que você usará no frontend:
-
-```bash
-npm install axios react-navigation react-navigation-stack react-navigation-tabs @react-native-async-storage/async-storage
+```
+npm install cors express dotenv jsonwebtoken bcrypt morgan pg swagger-ui-express swagger-jsdoc
 ```
 
-Além disso, para garantir que as dependências de navegação funcionem corretamente, instale as dependências específicas do Expo para navegação:
+#### 📦 Dependência para upload de imagem:
 
-```bash
-expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context
+```
+npm install --save expo-image-picker
 ```
 
 ---
 
-#### 2.3 **Rodar o Frontend no Expo Go**
+### 📱 Frontend (Mobile)
 
-1. **Rodar o aplicativo**:
+- React Native
+- Expo Go
+- JavaScript (JSX)
+- Axios
+- AsyncStorage
+- React Navigation
+- Upload de Imagens com `expo-image-picker`
 
-   ```bash
-   npm start
-   ```
+#### 📦 Dependências instaladas:
 
-2. **Escanear o QR code** com o **Expo Go** no seu dispositivo para rodar o app. Caso queira rodar no emulador, use:
-
-   * Para Android:
-
-     ```bash
-     expo start --android
-     ```
-   * Para iOS:
-
-     ```bash
-     expo start --ios
-     ```
-
-## 🧑‍💻 **Comandos Resumidos**
-
-### **Backend**
-
-1. **Criar o diretório e inicializar o Node.js**:
-
-   ```bash
-   mkdir backend
-   cd backend
-   npm init -y
-   npm install express mongoose dotenv cors bcryptjs jsonwebtoken nodemailer
-   npm install --save-dev nodemon
-   ```
-
-2. **Rodar o servidor com Nodemon**:
-
-   ```bash
-   npm run dev
-   ```
-
-### **Frontend**
-
-1. **Criar o diretório e inicializar o React Native com Expo**:
-
-   ```bash
-   mkdir frontend
-   cd frontend
-   expo init .
-   ```
-
-2. **Instalar dependências**:
-
-   ```bash
-   npm install axios react-navigation react-navigation-stack react-navigation-tabs @react-native-async-storage/async-storage
-   expo install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context
-   ```
-
-3. **Rodar o app no Expo Go**:
-
-   ```bash
-   npm start
-   ```
+```
+npm install
+npm install expo-image-picker
+```
 
 ---
 
+## ⚙️ Configuração Inicial
 
+### 🔧 Atualize os IPs locais
+
+Para rodar o app corretamente, você deve trocar o IP para o da sua máquina nos seguintes arquivos:
+
+1. **mobile/services/api.js**
+2. **backend/routes/uploadRoutes.js**
+3. **backend/swagger/swaggerConfig.js**
+
+Substitua por exemplo:
+
+```
+http://192.168.0.xxx:3000
+```
+
+Por:
+
+```
+http://SEU_IP_LOCAL:3000
+```
+
+Descubra seu IP com:
+
+```
+# Windows:
+ipconfig
+
+# Linux/Mac:
+ifconfig
+```
+
+---
+
+## ▶️ Como Rodar o Projeto
+
+### 🔙 Backend
+
+1. Acesse a pasta do backend:
+
+```
+cd backend
+```
+
+2. Rode o servidor:
+
+```
+node index.js
+```
+
+O backend ficará disponível na porta `3000`.
+
+---
+
+### 📲 Frontend (Mobile)
+
+1. Em outro terminal, acesse o diretório mobile:
+
+```
+cd mobile
+```
+
+2. Inicie o app com Expo:
+
+```
+npm start
+```
+
+3. Escaneie o QR code com o aplicativo **Expo Go** no seu celular.
+
+---
+
+## 📚 Documentação da API
+
+Acesse a documentação Swagger da API após iniciar o backend:
+
+```
+http://SEU_IP_LOCAL:3000/api-docs
+```
+
+---
+
+## 📸 Upload de Foto de Perfil
+
+- O app usa `expo-image-picker` para selecionar uma foto do usuário durante o cadastro.
+- A imagem é enviada ao backend e salva fisicamente em uma pasta local, enquanto o caminho é armazenado no banco PostgreSQL.
+
+---
+
+## ✅ Funcionalidades
+
+- Cadastro de usuário com dados nutricionais
+- Upload de foto
+- Login com JWT
+- Perfil do usuário
+- Edição de dados
+- Validação de token expirado
+- Logout automático
+- SplashScreen de carregamento
+- Interface amigável e responsiva
+
+---
+
+## 🧑‍💻 Desenvolvido por
+
+João Oliveira – [TCE Ceará](mailto:joao.oliveira@tce.ce.gov.br)
