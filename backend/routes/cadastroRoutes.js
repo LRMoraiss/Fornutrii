@@ -1,11 +1,11 @@
 const express = require('express');
 const controller = require('../controllers/cadastroController');
-const authMiddleware = require('../middleware/validateUsuario');
+const ValidateUsuario = require('../middleware/validateUsuario');
 
 const router = express.Router();
 
-router.post('/completar', authMiddleware, controller.completarCadastro);
-router.get('/:usuario_id', authMiddleware, controller.obterCadastro);
+router.post('/completar', ValidateUsuario.authenticate, controller.completarCadastro);
+router.get('/:usuario_id', ValidateUsuario.authenticate, controller.obterCadastro);
 
 /**
  * @swagger
@@ -49,7 +49,7 @@ router.get('/:usuario_id', authMiddleware, controller.obterCadastro);
  *       500:
  *         description: Erro no servidor
  */
-router.post('/completar', authMiddleware, controller.completarCadastro);
+router.post('/completar', ValidateUsuario.authenticate, controller.completarCadastro);
 
 /**
  * @swagger
@@ -73,6 +73,6 @@ router.post('/completar', authMiddleware, controller.completarCadastro);
  *       500:
  *         description: Erro no servidor
  */
-router.get('/:usuario_id', authMiddleware, controller.obterCadastro);
+router.get('/:usuario_id', ValidateUsuario.authenticate, controller.obterCadastro);
 
 module.exports = router;

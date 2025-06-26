@@ -17,26 +17,18 @@ class UsuarioRepository {
     return result.rows[0] ? new Usuario(result.rows[0]) : null;
   }
 
-  async create({ id, nome, email, senha, papel, cadastro_completo = false }) {
+  async create({ id, nome, email, senha, papel }) {
     const result = await db.query(
-      'INSERT INTO usuario (id, nome, email, senha, papel, cadastro_completo) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [id, nome, email, senha, papel, cadastro_completo]
+      'INSERT INTO usuario (id, nome, email, senha, papel) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [id, nome, email, senha, papel]
     );
     return new Usuario(result.rows[0]);
   }
 
-  async update(id, { nome, email, senha, papel, cadastro_completo }) {
+  async update(id, { nome, email, senha, papel }) {
     const result = await db.query(
-      'UPDATE usuario SET nome=$1, email=$2, senha=$3, papel=$4, cadastro_completo=$5 WHERE id=$6 RETURNING *',
-      [nome, email, senha, papel, cadastro_completo, id]
-    );
-    return result.rows[0] ? new Usuario(result.rows[0]) : null;
-  }
-
-  async updateCadastroCompleto(id) {
-    const result = await db.query(
-      'UPDATE usuario SET cadastro_completo = true WHERE id = $1 RETURNING *',
-      [id]
+      'UPDATE usuario SET nome=$1, email=$2, senha=$3, papel=$4 WHERE id=$5 RETURNING *',
+      [nome, email, senha, papel, id]
     );
     return result.rows[0] ? new Usuario(result.rows[0]) : null;
   }

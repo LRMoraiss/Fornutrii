@@ -33,7 +33,7 @@ class AuthController {
           id: usuario.id,
           nome: usuario.nome,
           email: usuario.email,
-          papel: usuario.papel,
+          papel: usuario.papel
         },
       });
     } catch (error) {
@@ -59,7 +59,7 @@ class AuthController {
           id: novoUsuario.id,
           nome: novoUsuario.nome,
           email: novoUsuario.email,
-          papel: novoUsuario.papel,
+          papel: novoUsuario.papel
         },
       });
     } catch (error) {

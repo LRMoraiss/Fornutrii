@@ -66,12 +66,9 @@ export default function PlanosAlimentarScreen() {
   );
 }
 
-// (mantém os styles como estão)
-
-
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 60,
     backgroundColor: colors.background,
     flex: 1,
   },
