@@ -33,21 +33,29 @@ class Server {
     this.app.use(morgan('dev'));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+
+    // Uploads de arquivo
     this.app.use(fileUpload({
+      useTempFiles: true,
+      tempFileDir: '/tmp/',
       createParentPath: true,
-      limits: { fileSize: 5 * 1024 * 1024 },
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     }));
 
+    // Servir arquivos estáticos da pasta uploads
     this.app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+    // Swagger
     this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
   }
 
   routes() {
     this.app.use('/api/auth', authRoutes);
-    this.app.use('/api/usuario', usuarioRoutes); // 🔥 Aqui é singular
+    this.app.use('/api/usuario', usuarioRoutes);
     this.app.use('/api/cadastro', cadastroRoutes);
     this.app.use('/api/upload', uploadRoutes);
 
+    // Rota padrão
     this.app.get('/', (req, res) => {
       res.json({
         nome: 'API ForNutri',
@@ -57,6 +65,7 @@ class Server {
       });
     });
 
+    // Tratamento de erros
     this.app.use((err, req, res, next) => {
       console.error(err.stack);
       res.status(500).json({ error: 'Erro interno do servidor' });
@@ -76,7 +85,7 @@ class Server {
   start() {
     this.app.listen(this.port, () => {
       console.log(`Servidor rodando na porta ${this.port}`);
-      console.log(`Documentação: http://localhost:${this.port}/api-docs`);
+      console.log(`Documentação: http://172.26.28.58:${this.port}/api-docs`);
     });
   }
 }

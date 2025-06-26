@@ -12,21 +12,18 @@ import { ProgressBar } from 'react-native-paper';
 import { PieChart, LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-// import * as Notifications from 'expo-notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-
   const [hydration, setHydration] = useState(4);
   const [calories, setCalories] = useState(1360);
   const [userName, setUserName] = useState('');
   const [userPhoto, setUserPhoto] = useState(null);
 
   useEffect(() => {
-    // scheduleNotifications(); // Se quiser ativar notificação, importe e descomente
     carregarDadosUsuario();
     loadData();
   }, []);
@@ -46,43 +43,25 @@ export default function HomeScreen() {
   };
 
   const pieData = [
-    {
-      name: 'Proteínas',
-      population: 35,
-      color: '#FF6384',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
-    {
-      name: 'Carboidratos',
-      population: 45,
-      color: '#36A2EB',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
-    {
-      name: 'Gorduras',
-      population: 20,
-      color: '#FFCE56',
-      legendFontColor: '#333',
-      legendFontSize: 14,
-    },
+    { name: 'Proteínas', population: 35, color: '#FF6384', legendFontColor: '#333', legendFontSize: 14 },
+    { name: 'Carboidratos', population: 45, color: '#36A2EB', legendFontColor: '#333', legendFontSize: 14 },
+    { name: 'Gorduras', population: 20, color: '#FFCE56', legendFontColor: '#333', legendFontSize: 14 },
   ];
 
   const caloricData = {
     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-    datasets: [
-      {
-        data: [1800, 2000, 1900, 2100, 1950, 1850, 2000],
-        strokeWidth: 2,
-      },
-    ],
+    datasets: [{ data: [1800, 2000, 1900, 2100, 1950, 1850, 2000], strokeWidth: 2 }],
   };
 
   return (
     <ScrollView style={styles.container}>
+      {/* TOPO */}
       <View style={styles.header}>
-        <View style={styles.userInfo}>
+        {/* Clique no avatar para ver perfil */}
+        <TouchableOpacity
+          style={styles.userInfo}
+          onPress={() => navigation.navigate('PerfilUsuario')}
+        >
           <Image
             source={userPhoto ? { uri: userPhoto } : { uri: 'https://i.pravatar.cc/100' }}
             style={styles.avatar}
@@ -91,15 +70,15 @@ export default function HomeScreen() {
             <Text style={styles.username}>{userName || 'Usuário'}</Text>
             <Text style={styles.location}>Fortaleza, CE</Text>
           </View>
-        </View>
-        <TouchableOpacity onPress={async () => {
-          await AsyncStorage.clear();
-          navigation.replace('Login');
-        }}>
-          <Ionicons name="log-out-outline" size={24} color="#F00" />
+        </TouchableOpacity>
+
+        {/* Ícone de notificações */}
+        <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
+          <Ionicons name="notifications-outline" size={24} color="#333" />
         </TouchableOpacity>
       </View>
 
+      {/* GRÁFICOS E METAS */}
       <Text style={styles.sectionTitle}>Distribuição de Macronutrientes</Text>
       <PieChart
         data={pieData}
@@ -126,9 +105,7 @@ export default function HomeScreen() {
       <View style={styles.waterRow}>
         {[...Array(8)].map((_, i) => (
           <TouchableOpacity key={i} onPress={() => setHydration(i + 1)}>
-            <View
-              style={[styles.waterCup, { opacity: i < hydration ? 1 : 0.3 }]}
-            />
+            <View style={[styles.waterCup, { opacity: i < hydration ? 1 : 0.3 }]} />
           </TouchableOpacity>
         ))}
       </View>
@@ -141,6 +118,7 @@ export default function HomeScreen() {
       />
       <Text style={styles.kcalText}>{calories} kcal de 2.000 kcal</Text>
 
+      {/* BOTÕES */}
       <TouchableOpacity
         style={styles.btn}
         onPress={() => navigation.navigate('RegistroRefeicoes')}
@@ -150,11 +128,9 @@ export default function HomeScreen() {
 
       <TouchableOpacity
         style={styles.btnSecondary}
-        onPress={() => navigation.navigate('Perfil')}
+        onPress={() => navigation.navigate('PlanosAlimentares')}
       >
-        <Text style={styles.btnText}>
-          Área Pessoal: Metas, Carteira, Planos, Gamificação
-        </Text>
+        <Text style={styles.btnText}>Ver Planos Alimentares</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -167,15 +143,10 @@ const chartConfig = {
   labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   strokeWidth: 2,
   barPercentage: 0.5,
-  useShadowColorFromDataset: false,
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 20,
-  },
+  container: { flex: 1, backgroundColor: '#F5F5F5', padding: 20 },
 
   header: {
     flexDirection: 'row',
@@ -193,14 +164,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
   },
-  username: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  location: {
-    fontSize: 14,
-    color: '#777',
-  },
+  username: { fontSize: 18, fontWeight: 'bold' },
+  location: { fontSize: 14, color: '#777' },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -238,7 +204,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   btnSecondary: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#FF9800',
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',

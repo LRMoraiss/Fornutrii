@@ -28,14 +28,14 @@ export default function RegisterScreen() {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' }],
-      });
-    }
-  }, [isSuccess]);
+ useEffect(() => {
+  if (isSuccess) {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  }
+}, [isSuccess, navigation]);
 
   const isValidEmailDomain = (email) => {
     const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];

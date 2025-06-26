@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { API_URL } from 'env'; 
 import {
-  View,
   Text,
   TextInput,
   TouchableOpacity,
@@ -17,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-
+const API_URL = 'http://172.26.28.58:3000'; // ou use process.env.API_URL
 
 export default function CompleteCadastro() {
   const navigation = useNavigation();
@@ -35,7 +33,7 @@ export default function CompleteCadastro() {
     (async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permissão necessária', 'Precisamos acessar sua galeria para adicionar uma foto.');
+        Alert.alert('Permissão necessária', 'Permita acesso à galeria para adicionar a foto.');
       }
     })();
   }, []);
@@ -43,7 +41,7 @@ export default function CompleteCadastro() {
   const escolherFoto = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ImagePicker.MediaTypeOptions.IMAGE, // corrigido
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.8,
@@ -54,7 +52,7 @@ export default function CompleteCadastro() {
       }
     } catch (error) {
       console.error('Erro ao selecionar imagem:', error);
-      Alert.alert('Erro', 'Não foi possível selecionar a imagem');
+      Alert.alert('Erro', 'Erro ao abrir a galeria');
     }
   };
 
@@ -70,14 +68,15 @@ export default function CompleteCadastro() {
       const token = await AsyncStorage.getItem('@ForNutri:token');
       const user = JSON.parse(await AsyncStorage.getItem('@ForNutri:user'));
 
-      // Upload da foto se existir
       let fotoUrl = form.foto;
+
+      // Upload da imagem
       if (form.foto) {
         const formData = new FormData();
         formData.append('foto', {
           uri: form.foto,
           name: 'foto.jpg',
-          type: 'image/jpeg'
+          type: 'image/jpeg',
         });
 
         const uploadResponse = await fetch(`${API_URL}/api/upload`, {
@@ -89,17 +88,16 @@ export default function CompleteCadastro() {
         });
 
         if (!uploadResponse.ok) throw new Error('Falha no upload da foto');
-        
+
         const uploadData = await uploadResponse.json();
         fotoUrl = uploadData.url;
       }
 
-      // Envia dados do cadastro completo
       const response = await fetch(`${API_URL}/api/cadastro/completar`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           usuario_id: user.id,
@@ -108,7 +106,7 @@ export default function CompleteCadastro() {
           idade: parseInt(form.idade),
           foto: fotoUrl,
           objetivo: form.objetivo,
-          restricoes: form.restricoes
+          restricoes: form.restricoes,
         }),
       });
 
@@ -117,18 +115,14 @@ export default function CompleteCadastro() {
         throw new Error(errorData.error || 'Erro ao completar cadastro');
       }
 
-      // Atualiza o usuário no AsyncStorage
       const updatedUser = { ...user, cadastro_completo: true };
       await AsyncStorage.setItem('@ForNutri:user', JSON.stringify(updatedUser));
 
-      Alert.alert('Sucesso', 'Cadastro completo realizado com sucesso!');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Home' }],
-      });
+      Alert.alert('Sucesso', 'Cadastro completo!');
+      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     } catch (error) {
       console.error('Erro no cadastro completo:', error);
-      Alert.alert('Erro', error.message || 'Não foi possível completar o cadastro');
+      Alert.alert('Erro', error.message || 'Erro ao salvar o cadastro');
     } finally {
       setLoading(false);
     }
@@ -136,8 +130,8 @@ export default function CompleteCadastro() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Complete seu Cadastro</Text>
@@ -175,7 +169,7 @@ export default function CompleteCadastro() {
             {form.foto ? 'Alterar Foto' : 'Adicionar Foto'}
           </Text>
         </TouchableOpacity>
-        
+
         {form.foto && (
           <Image source={{ uri: form.foto }} style={styles.fotoPreview} />
         )}
@@ -183,7 +177,7 @@ export default function CompleteCadastro() {
         <Text style={styles.label}>Objetivo</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ex: Perder peso, ganhar massa muscular"
+          placeholder="Ex: Perder peso, ganhar massa"
           value={form.objetivo}
           onChangeText={(text) => setForm({ ...form, objetivo: text })}
         />
@@ -191,18 +185,18 @@ export default function CompleteCadastro() {
         <Text style={styles.label}>Restrições Alimentares</Text>
         <TextInput
           style={styles.input}
-          placeholder="Ex: Lactose, glúten"
+          placeholder="Ex: Glúten, lactose"
           value={form.restricoes}
           onChangeText={(text) => setForm({ ...form, restricoes: text })}
         />
 
-        <TouchableOpacity 
-          style={styles.saveButton} 
+        <TouchableOpacity
+          style={styles.saveButton}
           onPress={handleSalvar}
           disabled={loading}
         >
           {loading ? (
-            <ActivityIndicator color="#FFFFFF" />
+            <ActivityIndicator color="#fff" />
           ) : (
             <Text style={styles.saveButtonText}>Salvar Cadastro</Text>
           )}
@@ -213,14 +207,8 @@ export default function CompleteCadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  scrollContainer: {
-    padding: 20,
-    paddingBottom: 40,
-  },
+  container: { flex: 1, backgroundColor: '#F5F5F5' },
+  scrollContainer: { padding: 20, paddingBottom: 40 },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -228,21 +216,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     textAlign: 'center',
   },
-  label: {
-    fontSize: 16,
-    color: '#333333',
-    marginBottom: 8,
-    fontWeight: '500',
-  },
+  label: { fontSize: 16, marginBottom: 8, color: '#333', fontWeight: '500' },
   input: {
-    backgroundColor: '#FFFFFF',
     height: 50,
+    backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#DDDDDD',
+    borderColor: '#DDD',
     borderRadius: 8,
     paddingHorizontal: 16,
     marginBottom: 16,
-    fontSize: 16,
   },
   fotoButton: {
     backgroundColor: '#2E7D32',
@@ -252,9 +234,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   fotoButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: '#FFF',
     fontWeight: 'bold',
+    fontSize: 16,
   },
   fotoPreview: {
     width: 120,
@@ -273,8 +255,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   saveButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    color: '#FFF',
     fontWeight: 'bold',
+    fontSize: 18,
   },
 });

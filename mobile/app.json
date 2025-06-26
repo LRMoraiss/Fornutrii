@@ -4,7 +4,7 @@
     "slug": "fornutri",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "fornutri",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -20,7 +20,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/logo.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

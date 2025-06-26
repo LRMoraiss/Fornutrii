@@ -108,15 +108,33 @@ export default function LoginScreen() {
             <Text style={styles.loginButtonText}>Entrar</Text>
           )}
         </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
+          <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  innerContainer: { flex: 1, justifyContent: 'center', padding: 20 },
-  title: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  innerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   input: {
     height: 50,
     borderWidth: 1,
@@ -140,5 +158,16 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
   },
-  loginButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  forgotPasswordText: {
+    color: '#2E7D32',
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: 14,
+    fontWeight: '500',
+  },
 });

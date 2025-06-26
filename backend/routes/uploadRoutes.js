@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
+    console.log('Corpo da requisição recebida:', req.files);
+
     if (!req.files || !req.files.foto) {
       return res.status(400).json({ error: 'Nenhuma foto enviada' });
     }
@@ -12,7 +14,6 @@ router.post('/', async (req, res) => {
     const foto = req.files.foto;
     const uploadDir = path.join(__dirname, '../uploads');
 
-    // Cria pasta uploads se não existir
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir);
     }
