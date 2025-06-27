@@ -94,6 +94,8 @@ export default function RegisterScreen() {
       });
 
       if (response.status === 201 || response.status === 200) {
+        console.log('Cadastro bem sucedido - setIsSuccess será chamado');
+        setIsSuccess(true);
         Alert.alert(
           'Sucesso',
           'Cadastro realizado com sucesso!',
@@ -102,13 +104,12 @@ export default function RegisterScreen() {
               text: 'OK',
               onPress: () => {
                 console.log('Usuário clicou em OK');
-                setIsSuccess(true);
               },
             },
           ],
           { cancelable: false }
         );
-      }
+}
     } catch (error) {
       console.error('Erro no cadastro:', error.response?.data || error.message);
       Alert.alert(
@@ -230,64 +231,91 @@ const styles = StyleSheet.create({
   fontWeight: 'bold',
   color: '#2E7D32',
   marginBottom: 24,
-  textAlign: 'center', // Adicionado
+  textAlign: 'center', 
 },
   input: {
-    flex: 1,
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    fontSize: 16,
-  },
-  inputError: { borderColor: 'red' },
-  infoText: { fontSize: 12, color: '#666666', marginBottom: 8 },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-    marginTop: 16,
-    marginBottom: 12,
-  },
+  height: 48,
+  borderWidth: 1,
+  borderColor: '#DDDDDD',
+  borderRadius: 8,
+  paddingHorizontal: 16,
+  marginBottom: 8,
+  fontSize: 16,
+  width: '100%',
+  maxWidth: 400,       
+  alignSelf: 'center', 
+},
+inputError: { borderColor: 'red' },
+infoText: {
+  fontSize: 12,
+  color: '#666666',
+  marginBottom: 8,
+  maxWidth: 400,
+  width: '100%',
+  textAlign: 'center',
+  alignSelf: 'center',
+},
+sectionTitle: {
+  fontSize: 16,
+  fontWeight: '500',
+  color: '#333333',
+  marginTop: 16,
+  marginBottom: 12,
+  textAlign: 'center',
+  alignSelf: 'center',
+  maxWidth: 400,
+  width: '100%',
+},
   userTypeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 24,
+  width: '100%',
+  maxWidth: 400,
+  alignSelf: 'center',
+},
   userTypeButton: {
-    flex: 1,
-    padding: 12,
-    marginHorizontal: 4,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  selectedUserType: {
-    backgroundColor: '#E8F5E9',
-    borderColor: '#2E7D32',
-  },
-  userTypeText: { color: '#333333' },
-  primaryButton: {
-    width: '100%',
-    backgroundColor: '#2E7D32',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
-  secondaryButtonText: {
+  flex: 1,
+  paddingVertical: 10,
+  marginHorizontal: 4,
+  borderWidth: 1,
+  borderColor: '#DDDDDD',
+  borderRadius: 8,
+  alignItems: 'center',
+},
+selectedUserType: {
+  backgroundColor: '#E8F5E9',
+  borderColor: '#2E7D32',
+},
+userTypeText: { color: '#333333' },
+primaryButton: {
+  width: '100%',
+  maxWidth: 400,
+  alignSelf: 'center',
+  backgroundColor: '#2E7D32',
+  padding: 16,
+  borderRadius: 8,
+  alignItems: 'center',
+  marginBottom: 16,
+},
+buttonText: {
+  color: '#FFFFFF',
+  fontWeight: 'bold',
+  fontSize: 16 
+},
+secondaryButtonText: {
   color: '#2E7D32',
   fontWeight: 'bold',
-  textAlign: 'center', // Adicionado
-  marginTop: 8,        // Opcional para distanciar do botão
+  textAlign: 'center', 
+  marginTop: 8,        
 },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
+passwordContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: '100%',
+  maxWidth: 400,
+  alignSelf: 'center',
+  marginBottom: 8,
+},
   passwordInput: { marginRight: 8 },
 });
