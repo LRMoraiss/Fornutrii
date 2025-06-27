@@ -28,14 +28,14 @@ export default function RegisterScreen() {
 
   const navigation = useNavigation();
 
- useEffect(() => {
-  if (isSuccess) {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  }
-}, [isSuccess, navigation]);
+  useEffect(() => {
+    if (isSuccess) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [isSuccess, navigation]);
 
   const isValidEmailDomain = (email) => {
     const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
@@ -101,14 +101,14 @@ export default function RegisterScreen() {
             {
               text: 'OK',
               onPress: () => {
-                console.log('Usuário clicou em OK');
-                setIsSuccess(true);
-              },
+                navigation.navigate('Login');
+              }
             },
           ],
           { cancelable: false }
         );
       }
+
     } catch (error) {
       console.error('Erro no cadastro:', error.response?.data || error.message);
       Alert.alert(
@@ -226,12 +226,12 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 32, backgroundColor: '#FFFFFF' },
   title: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  color: '#2E7D32',
-  marginBottom: 24,
-  textAlign: 'center', // Adicionado
-},
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginBottom: 24,
+    textAlign: 'center', // Adicionado
+  },
   input: {
     flex: 1,
     height: 48,
@@ -280,14 +280,15 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
   secondaryButtonText: {
-  color: '#2E7D32',
-  fontWeight: 'bold',
-  textAlign: 'center', // Adicionado
-  marginTop: 8,        // Opcional para distanciar do botão
-},
+    color: '#2E7D32',
+    fontWeight: 'bold',
+    textAlign: 'center', // Adicionado
+    marginTop: 8,        // Opcional para distanciar do botão
+  },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   passwordInput: { marginRight: 8 },
 });
+
