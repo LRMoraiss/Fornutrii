@@ -2,19 +2,21 @@ const db = require('../db/db');
 const Usuario = require('../models/usuarioModel');
 
 class UsuarioRepository {
-  // Método para buscar todos os profissionais
   async findAll() {
     const result = await db.query('SELECT * FROM usuario');
-    return result.rows.map(row => new Usario(row));  // Retorna um array de objetos Usario
+    return result.rows.map(row => new Usuario(row));
   }
 
-  // Método para buscar um Usario por ID
   async findById(id) {
     const result = await db.query('SELECT * FROM usuario WHERE id = $1', [id]);
-    return result.rows[0] ? new Usuario(result.rows[0]) : null;  // Retorna um objeto Usario ou null
+    return result.rows[0] ? new Usuario(result.rows[0]) : null;
   }
 
-  // Método para criar um novo Usario
+  async findByEmail(email) {
+    const result = await db.query('SELECT * FROM usuario WHERE email = $1', [email]);
+    return result.rows[0] ? new Usuario(result.rows[0]) : null;
+  }
+
   async create({ id, nome, email, senha, papel }) {
     const result = await db.query(
       'INSERT INTO usuario (id, nome, email, senha, papel) VALUES ($1, $2, $3, $4, $5) RETURNING *',
@@ -23,20 +25,18 @@ class UsuarioRepository {
     return new Usuario(result.rows[0]);
   }
 
-  // Método para atualizar um Usario
-  async update({ id, nome, email, senha, papel }) {
+  async update(id, { nome, email, senha, papel }) {
     const result = await db.query(
-      'UPDATE usuario SET id=$1, nome=$2, email=$3, senha=$4, papel=$5 RETURNING *',
-      [id, nome, email, senha, papel]
+      'UPDATE usuario SET nome=$1, email=$2, senha=$3, papel=$4 WHERE id=$5 RETURNING *',
+      [nome, email, senha, papel, id]
     );
-    return new Usuario(result.rows[0]);  // Retorna a instância atualizada de Usario
+    return result.rows[0] ? new Usuario(result.rows[0]) : null;
   }
 
-  // Método para remover um Usario
   async remove(id) {
     const result = await db.query('DELETE FROM usuario WHERE id = $1 RETURNING *', [id]);
-    return result.rows[0] ? new Usuario(result.rows[0]) : null;  // Retorna o Usario deletado ou null
+    return result.rows[0] ? new Usuario(result.rows[0]) : null;
   }
 }
 
-module.exports = new UsuarioRepository();  // Exporte uma instância única da classe
+module.exports = new UsuarioRepository();

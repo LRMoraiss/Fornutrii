@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fonts } from '../styles/theme';
+import { colors, fonts } from '../../constants/theme';
 
 export default function AdminScreen() {
   const navigation = useNavigation();

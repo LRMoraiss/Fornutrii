@@ -1,58 +1,53 @@
-import React, { useState, useContext } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Image,
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Alert,
-  ActivityIndicator
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { AuthContext } from '../../context/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { login } from '../../services/auth';
 
-const LoginScreen = () => {
+export default function LoginScreen() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   const navigation = useNavigation();
-  const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
-    // Validação básica dos campos
-    if (!email.trim() || !password.trim()) {
+    if (!email.trim() || !senha.trim()) {
       Alert.alert('Erro', 'Por favor, preencha todos os campos');
       return;
     }
 
-    // Validação de formato de e-mail simples
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      Alert.alert('Erro', 'Por favor, insira um e-mail válido');
-      return;
-    }
-
     setLoading(true);
-    
     try {
-      await login(email, password);
-      // Sucesso: O AuthContext já trata a navegação após login
+      const userData = await login(email, senha);
+      console.log('Login realizado:', userData);
+
+      await AsyncStorage.setItem('@ForNutri:user', JSON.stringify(userData.user));
+      await AsyncStorage.setItem('@ForNutri:token', userData.token);
+
+      // Redirecionar temporariamente sempre para tela de completar cadastro
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'CompleteCadastro' }],
+      });
     } catch (error) {
-      // Tratamento específico para diferentes tipos de erro
-      let errorMessage = 'Erro ao fazer login';
-      
-      if (error.message.includes('network')) {
-        errorMessage = 'Sem conexão com o servidor';
-      } else if (error.message.includes('400')) {
-        errorMessage = 'E-mail ou senha incorretos';
-      } else if (error.message.includes('500')) {
-        errorMessage = 'Erro no servidor. Tente novamente mais tarde';
-      }
-      
-      Alert.alert('Erro', errorMessage);
+      console.log('Erro no login:', error);
+      Alert.alert(
+        'Erro',
+        error.response?.data?.message || 'E-mail ou senha incorretos'
+      );
     } finally {
       setLoading(false);
     }
@@ -60,51 +55,42 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
       <View style={styles.innerContainer}>
-        {/* Logo */}
-        <Image 
-          source={require('../../assets/images/logo.png')} 
-          style={styles.logo}
-          resizeMode="contain"
+        <Text style={styles.title}>Login</Text>
+
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
-        {/* Título */}
-        <Text style={styles.title}>Acesse sua conta</Text>
-
-        {/* Formulário */}
-        <View style={styles.formContainer}>
+        <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#999"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            editable={!loading}
-          />
-          
-          <TextInput
-            style={styles.input}
+            style={[styles.input, styles.passwordInput]}
             placeholder="Senha"
-            placeholderTextColor="#999"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            editable={!loading}
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!showPassword}
           />
+          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+            <Ionicons
+              name={showPassword ? 'eye' : 'eye-off'}
+              size={24}
+              color="gray"
+            />
+          </TouchableOpacity>
         </View>
 
-        {/* Botão de Login */}
         <TouchableOpacity
-          style={[styles.loginButton, loading && styles.disabledButton]}
+          style={styles.loginButton}
           onPress={handleLogin}
           disabled={loading}
-          activeOpacity={0.7}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
@@ -113,103 +99,76 @@ const LoginScreen = () => {
           )}
         </TouchableOpacity>
 
-        {/* Links */}
-        <View style={styles.linksContainer}>
-          <TouchableOpacity 
-            onPress={() => navigation.navigate('ForgotPassword')}
-            disabled={loading}
-          >
-            <Text style={styles.linkText}>Esqueceu sua senha?</Text>
-          </TouchableOpacity>
-          
-          <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Não tem uma conta? </Text>
-            <TouchableOpacity 
-              onPress={() => navigation.navigate('Register')}
-              disabled={loading}
-            >
-              <Text style={styles.signupLink}>Cadastre-se</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
+          <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fff',
   },
   innerContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 32,
-  },
-  logo: {
-    width: 150,
-    height: 150,
-    alignSelf: 'center',
-    marginBottom: 32,
+    padding: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#2E7D32',
     textAlign: 'center',
-    marginBottom: 32,
-  },
-  formContainer: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    paddingHorizontal: 16,
+  height: 48,
+  borderWidth: 1,
+  borderColor: '#DDDDDD',
+  borderRadius: 8,
+  paddingHorizontal: 16,
+  marginBottom: 8,
+  fontSize: 16,
+  width: '100%',
+  maxWidth: 400,       
+  alignSelf: 'center', 
+},
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
-    fontSize: 16,
-    backgroundColor: '#FAFAFA',
+    alignSelf: 'center',
+    width: '100%',
+    maxWidth: 400,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 50,
   },
   loginButton: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
     backgroundColor: '#2E7D32',
-    height: 50,
+    padding: 16,
     borderRadius: 8,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-  },
-  disabledButton: {
-    opacity: 0.7,
+    marginBottom: 16,
   },
   loginButtonText: {
-    color: '#FFFFFF',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  linksContainer: {
-    alignItems: 'center',
-  },
-  linkText: {
+  forgotPasswordText: {
     color: '#2E7D32',
+    textAlign: 'center',
+    marginTop: 16,
     fontSize: 14,
-    marginBottom: 16,
-  },
-  signupContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  signupText: {
-    color: '#666666',
-    fontSize: 14,
-  },
-  signupLink: {
-    color: '#2E7D32',
-    fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });
-
-export default LoginScreen;

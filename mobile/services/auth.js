@@ -1,20 +1,12 @@
-// services/auth.js (Frontend)
+// services/auth.js
 import api from './api';
 
-export const login = async (email, password) => {
+export const login = async (email, senha) => {
   try {
-    const response = await api.post('/auth/login', { email, password });
+    const response = await api.post('/auth/login', { email, senha });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.error || 'Erro ao fazer login');
-  }
-};
-
-export const register = async (userData) => {
-  try {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.error || 'Erro ao registrar');
+    console.error('Erro no login:', error);
+    throw error;
   }
 };

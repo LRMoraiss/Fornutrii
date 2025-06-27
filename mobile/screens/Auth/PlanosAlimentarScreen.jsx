@@ -2,8 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import api from '../api/api';
-import { colors, fonts } from '../styles/theme';
+import api from "../../services/api"; 
+import { colors, fonts } from '../../constants/theme';
 
 export default function PlanosAlimentarScreen() {
   const [planos, setPlanos] = useState([]);
@@ -66,12 +66,9 @@ export default function PlanosAlimentarScreen() {
   );
 }
 
-// (mantém os styles como estão)
-
-
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 60,
     backgroundColor: colors.background,
     flex: 1,
   },

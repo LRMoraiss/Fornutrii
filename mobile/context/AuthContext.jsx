@@ -19,8 +19,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const login = async (email, password) => {
-    const data = await authService.login(email, password);
+  const login = async (email, senha) => {
+    const data = await authService.login(email, senha);
     await AsyncStorage.setItem('@Auth:token', data.token);
     await AsyncStorage.setItem('@Auth:user', JSON.stringify(data.user));
     setUser(data.user);
@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     const data = await authService.register(userData);
-    await login(userData.email, userData.password); // Login após registro
+    await login(userData.email, userData.senha); // Login após registro
   };
 
   const logout = async () => {

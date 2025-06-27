@@ -1,34 +1,37 @@
-// db/dbInit.js
-const db = require('./db'); // Importa a conexão com o banco de dados
+const db = require('./db');
 
-// Script SQL para criar a tabela usuario
-const createTable = async () => {
-  const checkTableQuery = `SELECT to_regclass('public.usuario');`;
-
+async function dbInit() {
   try {
-    const result = await db.query(checkTableQuery);
+    // Tabela usuario com CPF como id
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS usuario (
+        id CHAR(11) PRIMARY KEY,
+        nome TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        senha TEXT NOT NULL,
+        papel TEXT NOT NULL
+      );
+    `);
 
-    // Verifica se a tabela já existe
-    if (result.rows[0].to_regclass === null) {
-      // Se a tabela não existir, cria a tabela
-      const createQuery = `
-        CREATE TABLE usuario (
-          id SERIAL PRIMARY KEY,
-          nome VARCHAR(255) NOT NULL,
-          email VARCHAR(255) NOT NULL,
-          senha VARCHAR(255) NOT NULL,
-          papel VARCHAR(100) NOT NULL
-        );
-      `;
-      await db.query(createQuery);  // Executa a criação da tabela
-      console.log('Tabela "usuario" criada com sucesso!');  // Exibe a mensagem apenas se a tabela foi criada
-    } else {
-      // Se a tabela já existir, não faz nada
-      console.log('Tabela "usuario" já existe.');
-    }
+    // Tabela perfil_nutricional usando CPF como chave estrangeira
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS perfil_nutricional (
+        id SERIAL PRIMARY KEY,
+        usuario_id CHAR(11) UNIQUE NOT NULL REFERENCES usuario(id) ON DELETE CASCADE,
+        peso REAL,
+        altura REAL,
+        idade INTEGER,
+        foto TEXT,
+        objetivo TEXT,
+        restricoes TEXT
+      );
+    `);
+
+    console.log('Tabelas criadas/verificadas com sucesso');
   } catch (err) {
-    console.error('Erro ao criar tabela "usuario":', err.message);
+    console.error('Erro ao criar tabelas:', err);
+    throw err;
   }
-};
+}
 
-module.exports = createTable;
+module.exports = dbInit;
