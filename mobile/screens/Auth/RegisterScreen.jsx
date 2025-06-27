@@ -28,14 +28,14 @@ export default function RegisterScreen() {
 
   const navigation = useNavigation();
 
- useEffect(() => {
-  if (isSuccess) {
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  }
-}, [isSuccess, navigation]);
+  useEffect(() => {
+    if (isSuccess) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+    }
+  }, [isSuccess, navigation]);
 
   const isValidEmailDomain = (email) => {
     const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
@@ -103,13 +103,23 @@ export default function RegisterScreen() {
             {
               text: 'OK',
               onPress: () => {
+<<<<<<< HEAD
                 console.log('Usuário clicou em OK');
               },
+=======
+                navigation.navigate('Login');
+              }
+>>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
             },
           ],
           { cancelable: false }
         );
+<<<<<<< HEAD
 }
+=======
+      }
+
+>>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
     } catch (error) {
       console.error('Erro no cadastro:', error.response?.data || error.message);
       Alert.alert(
@@ -227,12 +237,21 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 32, backgroundColor: '#FFFFFF' },
   title: {
+<<<<<<< HEAD
   fontSize: 20,
   fontWeight: 'bold',
   color: '#2E7D32',
   marginBottom: 24,
   textAlign: 'center', 
 },
+=======
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#2E7D32',
+    marginBottom: 24,
+    textAlign: 'center', // Adicionado
+  },
+>>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
   input: {
   height: 48,
   borderWidth: 1,
@@ -275,6 +294,7 @@ sectionTitle: {
   alignSelf: 'center',
 },
   userTypeButton: {
+<<<<<<< HEAD
   flex: 1,
   paddingVertical: 10,
   marginHorizontal: 4,
@@ -317,5 +337,40 @@ passwordContainer: {
   alignSelf: 'center',
   marginBottom: 8,
 },
+=======
+    flex: 1,
+    padding: 12,
+    marginHorizontal: 4,
+    borderWidth: 1,
+    borderColor: '#DDDDDD',
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  selectedUserType: {
+    backgroundColor: '#E8F5E9',
+    borderColor: '#2E7D32',
+  },
+  userTypeText: { color: '#333333' },
+  primaryButton: {
+    width: '100%',
+    backgroundColor: '#2E7D32',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
+  secondaryButtonText: {
+    color: '#2E7D32',
+    fontWeight: 'bold',
+    textAlign: 'center', // Adicionado
+    marginTop: 8,        // Opcional para distanciar do botão
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+>>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
   passwordInput: { marginRight: 8 },
 });
+

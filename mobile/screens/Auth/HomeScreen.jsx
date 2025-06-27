@@ -13,8 +13,10 @@ import { PieChart, LineChart } from 'react-native-chart-kit';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
+const baseURL = 'http://10.0.30.179:3000/upload/';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -31,9 +33,11 @@ export default function HomeScreen() {
   const carregarDadosUsuario = async () => {
     const nome = await AsyncStorage.getItem('userName');
     const foto = await AsyncStorage.getItem('userPhoto');
+    console.log('Nome do usuário:', nome);
+    console.log('Foto do usuário:', foto);
     if (nome) setUserName(nome);
-    if (foto) setUserPhoto(foto);
-  };
+    if (foto) setUserPhoto(`${baseURL}${foto}`);
+  }
 
   const loadData = async () => {
     const storedCalories = await AsyncStorage.getItem('dailyCalories');
@@ -53,86 +57,109 @@ export default function HomeScreen() {
     datasets: [{ data: [1800, 2000, 1900, 2100, 1950, 1850, 2000], strokeWidth: 2 }],
   };
 
+  const handleLogout = async () => {
+    await AsyncStorage.clear();
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      {/* TOPO */}
-      <View style={styles.header}>
-        {/* Clique no avatar para ver perfil */}
-        <TouchableOpacity
-          style={styles.userInfo}
-          onPress={() => navigation.navigate('PerfilUsuario')}
-        >
-          <Image
-            source={userPhoto ? { uri: userPhoto } : { uri: 'https://i.pravatar.cc/100' }}
-            style={styles.avatar}
-          />
-          <View>
-            <Text style={styles.username}>{userName || 'Usuário'}</Text>
-            <Text style={styles.location}>Fortaleza, CE</Text>
-          </View>
-        </TouchableOpacity>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* TOPO */}
+        <View style={styles.header}>
+          {/* Avatar */}
+          <TouchableOpacity
+            style={styles.userInfo}
+            onPress={() => navigation.navigate('PerfilUsuario')}
+          >
 
-        {/* Ícone de notificações */}
-        <TouchableOpacity onPress={() => navigation.navigate('Notificacoes')}>
-          <Ionicons name="notifications-outline" size={24} color="#333" />
-        </TouchableOpacity>
-      </View>
-
-      {/* GRÁFICOS E METAS */}
-      <Text style={styles.sectionTitle}>Distribuição de Macronutrientes</Text>
-      <PieChart
-        data={pieData}
-        width={screenWidth - 40}
-        height={220}
-        chartConfig={chartConfig}
-        accessor="population"
-        backgroundColor="transparent"
-        paddingLeft="10"
-        absolute
-      />
-
-      <Text style={styles.sectionTitle}>Histórico Calórico Semanal</Text>
-      <LineChart
-        data={caloricData}
-        width={screenWidth - 40}
-        height={220}
-        chartConfig={chartConfig}
-        bezier
-        style={styles.graphStyle}
-      />
-
-      <Text style={styles.sectionTitle}>Meta de Hidratação</Text>
-      <View style={styles.waterRow}>
-        {[...Array(8)].map((_, i) => (
-          <TouchableOpacity key={i} onPress={() => setHydration(i + 1)}>
-            <View style={[styles.waterCup, { opacity: i < hydration ? 1 : 0.3 }]} />
+            <Image
+              source={{ uri: userPhoto }}
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+                marginRight: 10,
+                backgroundColor: '#ddd', // ajuda a ver se o espaço existe
+              }}
+              resizeMode="cover"
+            />
+            <View>
+              <Text style={styles.username}>{userName || 'Usuário'}</Text>
+              <Text style={styles.location}>Fortaleza, CE</Text>
+            </View>
           </TouchableOpacity>
-        ))}
-      </View>
 
-      <Text style={styles.sectionTitle}>Meta Calórica</Text>
-      <ProgressBar
-        progress={calories / 2000}
-        color="#36A2EB"
-        style={styles.progressBar}
-      />
-      <Text style={styles.kcalText}>{calories} kcal de 2.000 kcal</Text>
+          {/* Notificações */}
+          <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
+            <Ionicons name="notifications-outline" size={26} color="#333" />
+          </TouchableOpacity>
+        </View>
 
-      {/* BOTÕES */}
-      <TouchableOpacity
-        style={styles.btn}
-        onPress={() => navigation.navigate('RegistroRefeicoes')}
-      >
-        <Text style={styles.btnText}>Registrar Refeição</Text>
-      </TouchableOpacity>
+        {/* Gráficos */}
+        <Text style={styles.sectionTitle}>Distribuição de Macronutrientes</Text>
+        <PieChart
+          data={pieData}
+          width={screenWidth - 40}
+          height={220}
+          chartConfig={chartConfig}
+          accessor="population"
+          backgroundColor="transparent"
+          paddingLeft="10"
+          absolute
+        />
 
-      <TouchableOpacity
-        style={styles.btnSecondary}
-        onPress={() => navigation.navigate('PlanosAlimentares')}
-      >
-        <Text style={styles.btnText}>Ver Planos Alimentares</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        <Text style={styles.sectionTitle}>Histórico Calórico Semanal</Text>
+        <LineChart
+          data={caloricData}
+          width={screenWidth - 40}
+          height={220}
+          chartConfig={chartConfig}
+          bezier
+          style={styles.graphStyle}
+        />
+
+        {/* Metas */}
+        <Text style={styles.sectionTitle}>Meta de Hidratação</Text>
+        <View style={styles.waterRow}>
+          {[...Array(8)].map((_, i) => (
+            <TouchableOpacity key={i} onPress={() => setHydration(i + 1)}>
+              <View style={[styles.waterCup, { opacity: i < hydration ? 1 : 0.3 }]} />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <Text style={styles.sectionTitle}>Meta Calórica</Text>
+        <ProgressBar
+          progress={calories / 2000}
+          color="#36A2EB"
+          style={styles.progressBar}
+        />
+        <Text style={styles.kcalText}>{calories} kcal de 2.000 kcal</Text>
+
+        {/* Botões */}
+        <TouchableOpacity
+          style={styles.btnSecondary}
+          onPress={() => navigation.navigate('PlanosAlimentar')}
+        >
+          <Text style={styles.btnText}>Ver Planos Alimentares</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigation.navigate('RegistroRefeicoes')}
+        >
+          <Text style={styles.btnText}>Registrar Refeição</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
+          <Text style={styles.logoutText}>Sair</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -146,72 +173,112 @@ const chartConfig = {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5', padding: 20 },
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
 
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
   },
+
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
     marginRight: 10,
   },
-  username: { fontSize: 18, fontWeight: 'bold' },
-  location: { fontSize: 14, color: '#777' },
+
+  username: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  location: {
+    fontSize: 13,
+    color: '#777',
+  },
 
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     marginVertical: 10,
   },
+
   graphStyle: {
-    borderRadius: 10,
+    borderRadius: 8,
+    marginBottom: 10,
   },
+
   waterRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginVertical: 10,
   },
+
   waterCup: {
-    width: 25,
-    height: 50,
+    width: 22,
+    height: 44,
     backgroundColor: '#36A2EB',
-    borderRadius: 6,
-  },
-  progressBar: {
-    height: 10,
     borderRadius: 5,
+  },
+
+  progressBar: {
+    height: 8,
+    borderRadius: 4,
     marginTop: 5,
+    backgroundColor: '#E0E0E0',
   },
+
   kcalText: {
-    fontSize: 14,
+    fontSize: 13,
     color: '#555',
-    marginBottom: 20,
+    marginBottom: 16,
   },
+
   btn: {
     backgroundColor: '#36A2EB',
-    padding: 12,
+    paddingVertical: 10,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 10,
   },
+
   btnSecondary: {
     backgroundColor: '#FF9800',
-    padding: 12,
+    paddingVertical: 10,
     borderRadius: 8,
     alignItems: 'center',
+    marginBottom: 16,
   },
+
+  logoutBtn: {
+    backgroundColor: '#E53935',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
   btnText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  logoutText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

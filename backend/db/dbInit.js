@@ -9,8 +9,7 @@ async function dbInit() {
         nome TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
         senha TEXT NOT NULL,
-        papel TEXT NOT NULL,
-        cadastro_completo BOOLEAN DEFAULT FALSE
+        papel TEXT NOT NULL
       );
     `);
 

@@ -34,24 +34,14 @@ export default function LoginScreen() {
       const userData = await login(email, senha);
       console.log('Login realizado:', userData);
 
-      await AsyncStorage.setItem('userId', userData.id);
-      await AsyncStorage.setItem('userName', userData.nome);
-      await AsyncStorage.setItem('userEmail', userData.email);
-      await AsyncStorage.setItem('token', userData.token);
+      await AsyncStorage.setItem('@ForNutri:user', JSON.stringify(userData.user));
+      await AsyncStorage.setItem('@ForNutri:token', userData.token);
 
-      const cadastroCompleto = userData.cadastro_completo;
-
-      if (cadastroCompleto) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Home' }],
-        });
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'CompleteCadastro' }],
-        });
-      }
+      // Redirecionar temporariamente sempre para tela de completar cadastro
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'CompleteCadastro' }],
+      });
     } catch (error) {
       console.log('Erro no login:', error);
       Alert.alert(

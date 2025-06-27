@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-const API_URL = 'http://172.26.28.58:3000'; // ou use process.env.API_URL
+const API_URL = 'http://10.0.30.179:3000'; // ou use process.env.API_URL
 
 export default function CompleteCadastro() {
   const navigation = useNavigation();
@@ -118,8 +118,17 @@ export default function CompleteCadastro() {
       const updatedUser = { ...user, cadastro_completo: true };
       await AsyncStorage.setItem('@ForNutri:user', JSON.stringify(updatedUser));
 
+      // ✅ Salvando nome e foto para uso na HomeScreen
+      if (user.nome) {
+        await AsyncStorage.setItem('userName', user.nome); // ou 'user.name' se for esse o campo
+      }
+      if (fotoUrl) {
+        await AsyncStorage.setItem('userPhoto', fotoUrl);
+      }
+
       Alert.alert('Sucesso', 'Cadastro completo!');
       navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+
     } catch (error) {
       console.error('Erro no cadastro completo:', error);
       Alert.alert('Erro', error.message || 'Erro ao salvar o cadastro');
@@ -127,6 +136,7 @@ export default function CompleteCadastro() {
       setLoading(false);
     }
   };
+
 
   return (
     <KeyboardAvoidingView

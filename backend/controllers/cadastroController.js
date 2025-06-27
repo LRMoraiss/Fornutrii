@@ -8,10 +8,7 @@ class CadastroController {
       // 1. Salvar ou atualizar perfil nutricional
       const perfilAtualizado = await perfilService.salvarOuAtualizar(usuario_id, {
         peso, altura, idade, foto, objetivo, restricoes
-      });
-
-      // 2. Atualizar flag cadastro_completo
-      await perfilService.marcarCadastroCompleto(usuario_id);
+      });    
 
       res.json(perfilAtualizado);
     } catch (error) {
