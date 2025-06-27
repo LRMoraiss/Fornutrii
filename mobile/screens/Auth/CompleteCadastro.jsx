@@ -15,7 +15,7 @@ import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 
-const API_URL = 'http://10.0.30.179:3000'; // ou use process.env.API_URL
+const API_URL = 'http://172.26.28.58:3000'; // ou use process.env.API_URL
 
 export default function CompleteCadastro() {
   const navigation = useNavigation();
@@ -247,6 +247,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,       
     alignSelf: 'center',
   },
+  
   fotoButton: {
     width: '100%',
     maxWidth: 400,
