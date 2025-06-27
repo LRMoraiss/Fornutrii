@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,19 +6,19 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
-import api from '../../services/api';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import api from "../../services/api";
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({
-    id: '',
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    userType: 'patient',
+    id: "",
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    userType: "patient",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -32,14 +32,19 @@ export default function RegisterScreen() {
     if (isSuccess) {
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Login' }],
+        routes: [{ name: "Login" }],
       });
     }
   }, [isSuccess, navigation]);
 
   const isValidEmailDomain = (email) => {
-    const allowedDomains = ['gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com'];
-    const domain = email.split('@')[1];
+    const allowedDomains = [
+      "gmail.com",
+      "hotmail.com",
+      "outlook.com",
+      "yahoo.com",
+    ];
+    const domain = email.split("@")[1];
     return allowedDomains.includes(domain);
   };
 
@@ -57,8 +62,8 @@ export default function RegisterScreen() {
     } else if (!isValidEmailDomain(form.email)) {
       newErrors.email = true;
       Alert.alert(
-        'Erro no Email',
-        'O email deve ser dos domínios: gmail, hotmail, outlook ou yahoo.'
+        "Erro no Email",
+        "O email deve ser dos domínios: gmail, hotmail, outlook ou yahoo."
       );
     }
 
@@ -67,8 +72,8 @@ export default function RegisterScreen() {
     } else if (!isStrongPassword(form.password)) {
       newErrors.password = true;
       Alert.alert(
-        'Senha fraca',
-        'A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial.'
+        "Senha fraca",
+        "A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, número e caractere especial."
       );
     }
 
@@ -76,7 +81,7 @@ export default function RegisterScreen() {
       newErrors.confirmPassword = true;
     } else if (form.password !== form.confirmPassword) {
       newErrors.confirmPassword = true;
-      Alert.alert('Erro', 'As senhas não coincidem');
+      Alert.alert("Erro", "As senhas não coincidem");
     }
 
     if (!form.id) newErrors.id = true;
@@ -85,7 +90,7 @@ export default function RegisterScreen() {
     if (Object.keys(newErrors).length > 0) return;
 
     try {
-      const response = await api.post('/usuario', {
+      const response = await api.post("/usuario", {
         id: form.id,
         nome: form.name,
         email: form.email,
@@ -94,45 +99,36 @@ export default function RegisterScreen() {
       });
 
       if (response.status === 201 || response.status === 200) {
-        console.log('Cadastro bem sucedido - setIsSuccess será chamado');
+        console.log("Cadastro bem sucedido - setIsSuccess será chamado");
         setIsSuccess(true);
         Alert.alert(
-          'Sucesso',
-          'Cadastro realizado com sucesso!',
+          "Sucesso",
+          "Cadastro realizado com sucesso!",
           [
             {
-              text: 'OK',
+              text: "OK",
               onPress: () => {
-<<<<<<< HEAD
-                console.log('Usuário clicou em OK');
+                navigation.navigate("Login");
               },
-=======
-                navigation.navigate('Login');
-              }
->>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
             },
           ],
           { cancelable: false }
         );
-<<<<<<< HEAD
-}
-=======
       }
-
->>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
     } catch (error) {
-      console.error('Erro no cadastro:', error.response?.data || error.message);
+      console.error("Erro no cadastro:", error.response?.data || error.message);
       Alert.alert(
-        'Erro',
-        error.response?.data?.message || 'Ocorreu um erro no cadastro. Tente novamente.'
+        "Erro",
+        error.response?.data?.message ||
+          "Ocorreu um erro no cadastro. Tente novamente."
       );
     }
   };
 
   const userTypes = [
-    { label: 'Paciente', value: 'patient' },
-    { label: 'Nutricionista', value: 'nutritionist' },
-    { label: 'Educador Físico', value: 'trainer' },
+    { label: "Paciente", value: "patient" },
+    { label: "Nutricionista", value: "nutritionist" },
+    { label: "Educador Físico", value: "trainer" },
   ];
 
   return (
@@ -161,12 +157,17 @@ export default function RegisterScreen() {
         keyboardType="email-address"
       />
       <Text style={styles.infoText}>
-        Aceitamos apenas emails @gmail.com, @hotmail.com, @outlook.com e @yahoo.com
+        Aceitamos apenas emails @gmail.com, @hotmail.com, @outlook.com e
+        @yahoo.com
       </Text>
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[styles.input, styles.passwordInput, errors.password && styles.inputError]}
+          style={[
+            styles.input,
+            styles.passwordInput,
+            errors.password && styles.inputError,
+          ]}
           placeholder="Senha"
           value={form.password}
           onChangeText={(text) => setForm({ ...form, password: text })}
@@ -174,7 +175,7 @@ export default function RegisterScreen() {
         />
         <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
           <Ionicons
-            name={showPassword ? 'eye' : 'eye-off'}
+            name={showPassword ? "eye" : "eye-off"}
             size={24}
             color="gray"
           />
@@ -183,23 +184,29 @@ export default function RegisterScreen() {
 
       <Text style={styles.infoText}>
         A senha deve ter pelo menos 8 caracteres, incluindo:
-        {'\n'}- 1 letra maiúscula
-        {'\n'}- 1 letra minúscula
-        {'\n'}- 1 número
-        {'\n'}- 1 caractere especial
+        {"\n"}- 1 letra maiúscula
+        {"\n"}- 1 letra minúscula
+        {"\n"}- 1 número
+        {"\n"}- 1 caractere especial
       </Text>
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[styles.input, styles.passwordInput, errors.confirmPassword && styles.inputError]}
+          style={[
+            styles.input,
+            styles.passwordInput,
+            errors.confirmPassword && styles.inputError,
+          ]}
           placeholder="Confirmar Senha"
           value={form.confirmPassword}
           onChangeText={(text) => setForm({ ...form, confirmPassword: text })}
           secureTextEntry={!showConfirmPassword}
         />
-        <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+        <TouchableOpacity
+          onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+        >
           <Ionicons
-            name={showConfirmPassword ? 'eye' : 'eye-off'}
+            name={showConfirmPassword ? "eye" : "eye-off"}
             size={24}
             color="gray"
           />
@@ -227,7 +234,7 @@ export default function RegisterScreen() {
         <Text style={styles.buttonText}>Cadastrar</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <Text style={styles.secondaryButtonText}>Já tem conta? Faça login</Text>
       </TouchableOpacity>
     </View>
@@ -235,142 +242,93 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 32, backgroundColor: '#FFFFFF' },
+  container: { flex: 1, padding: 32, backgroundColor: "#FFFFFF" },
   title: {
-<<<<<<< HEAD
-  fontSize: 20,
-  fontWeight: 'bold',
-  color: '#2E7D32',
-  marginBottom: 24,
-  textAlign: 'center', 
-},
-=======
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#2E7D32',
+    fontWeight: "bold",
+    color: "#2E7D32",
     marginBottom: 24,
-    textAlign: 'center', // Adicionado
+    textAlign: "center", // Adicionado
   },
->>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
   input: {
-  height: 48,
-  borderWidth: 1,
-  borderColor: '#DDDDDD',
-  borderRadius: 8,
-  paddingHorizontal: 16,
-  marginBottom: 8,
-  fontSize: 16,
-  width: '100%',
-  maxWidth: 400,       
-  alignSelf: 'center', 
-},
-inputError: { borderColor: 'red' },
-infoText: {
-  fontSize: 12,
-  color: '#666666',
-  marginBottom: 8,
-  maxWidth: 400,
-  width: '100%',
-  textAlign: 'center',
-  alignSelf: 'center',
-},
-sectionTitle: {
-  fontSize: 16,
-  fontWeight: '500',
-  color: '#333333',
-  marginTop: 16,
-  marginBottom: 12,
-  textAlign: 'center',
-  alignSelf: 'center',
-  maxWidth: 400,
-  width: '100%',
-},
+    height: 48,
+    borderWidth: 1,
+    borderColor: "#DDDDDD",
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    fontSize: 16,
+    width: "100%",
+    maxWidth: 400,
+    alignSelf: "center",
+  },
+  inputError: { borderColor: "red" },
+  infoText: {
+    fontSize: 12,
+    color: "#666666",
+    marginBottom: 8,
+    maxWidth: 400,
+    width: "100%",
+    textAlign: "center",
+    alignSelf: "center",
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#333333",
+    marginTop: 16,
+    marginBottom: 12,
+    textAlign: "center",
+    alignSelf: "center",
+    maxWidth: 400,
+    width: "100%",
+  },
   userTypeContainer: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginBottom: 24,
-  width: '100%',
-  maxWidth: 400,
-  alignSelf: 'center',
-},
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 24,
+    width: "100%",
+    maxWidth: 400,
+    alignSelf: "center",
+  },
   userTypeButton: {
-<<<<<<< HEAD
-  flex: 1,
-  paddingVertical: 10,
-  marginHorizontal: 4,
-  borderWidth: 1,
-  borderColor: '#DDDDDD',
-  borderRadius: 8,
-  alignItems: 'center',
-},
-selectedUserType: {
-  backgroundColor: '#E8F5E9',
-  borderColor: '#2E7D32',
-},
-userTypeText: { color: '#333333' },
-primaryButton: {
-  width: '100%',
-  maxWidth: 400,
-  alignSelf: 'center',
-  backgroundColor: '#2E7D32',
-  padding: 16,
-  borderRadius: 8,
-  alignItems: 'center',
-  marginBottom: 16,
-},
-buttonText: {
-  color: '#FFFFFF',
-  fontWeight: 'bold',
-  fontSize: 16 
-},
-secondaryButtonText: {
-  color: '#2E7D32',
-  fontWeight: 'bold',
-  textAlign: 'center', 
-  marginTop: 8,        
-},
-passwordContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-  width: '100%',
-  maxWidth: 400,
-  alignSelf: 'center',
-  marginBottom: 8,
-},
-=======
     flex: 1,
     padding: 12,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: '#DDDDDD',
+    borderColor: "#DDDDDD",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   selectedUserType: {
-    backgroundColor: '#E8F5E9',
-    borderColor: '#2E7D32',
+    backgroundColor: "#E8F5E9",
+    borderColor: "#2E7D32",
   },
-  userTypeText: { color: '#333333' },
+  userTypeText: { color: "#333333" },
   primaryButton: {
-    width: '100%',
-    backgroundColor: '#2E7D32',
+    width: "100%",
+    maxWidth: 400,
+    alignSelf: "center",
+    backgroundColor: "#2E7D32",
     padding: 16,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 16,
   },
-  buttonText: { color: '#FFFFFF', fontWeight: 'bold', fontSize: 16 },
+  buttonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
   secondaryButtonText: {
-    color: '#2E7D32',
-    fontWeight: 'bold',
-    textAlign: 'center', // Adicionado
-    marginTop: 8,        // Opcional para distanciar do botão
+    color: "#2E7D32",
+    fontWeight: "bold",
+    textAlign: "center", // Adicionado
+    marginTop: 8, // Opcional para distanciar do botão
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    alignSelf: "center",
+    width: "100%",
+    maxWidth: 400,
   },
->>>>>>> aa2865aa45d48bd7e5e9e50b3e893176fec33f66
   passwordInput: { marginRight: 8 },
 });
-
