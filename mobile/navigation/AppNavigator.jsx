@@ -11,6 +11,8 @@ import HomeScreen from '../screens/Auth/HomeScreen';
 import NotificationsScreen from '../screens/Auth/NotificationsScreen';
 import CompleteCadastro from '../screens/Auth/CompleteCadastro';
 import PlanosAlimentarScreen from '../screens/Auth/PlanosAlimentarScreen';
+import NovoPlanoScreen from '../screens/Auth/NovoPalnoScreen';
+import DetalhesPlanoScreen from '../screens/Auth/DetalhesPlanoScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -23,10 +25,12 @@ export default function AppNavigator() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="CompleteCadastro" component={CompleteCadastro} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="PlanosAlimentar" component={PlanosAlimentarScreen} />
-        <Stack.Screen name="CompleteCadastro" component={CompleteCadastro} />
+        <Stack.Screen name="novo-plano" component={NovoPlanoScreen} /> 
+        <Stack.Screen name="detalhes-plano" component={DetalhesPlanoScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

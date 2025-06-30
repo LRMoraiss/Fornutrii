@@ -13,6 +13,8 @@ const authRoutes = require('./routes/authRoutes');
 const usuarioRoutes = require('./routes/usuarioRoutes');
 const cadastroRoutes = require('./routes/cadastroRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const planosAlimentarRoutes = require('./routes/planosAlimentarRoutes');
+
 
 class Server {
   constructor() {
@@ -54,6 +56,8 @@ class Server {
     this.app.use('/api/usuario', usuarioRoutes);
     this.app.use('/api/cadastro', cadastroRoutes);
     this.app.use('/api/upload', uploadRoutes);
+    this.app.use('/api/planos-alimentar', planosAlimentarRoutes);
+
 
     // Rota padrão
     this.app.get('/', (req, res) => {
@@ -85,7 +89,7 @@ class Server {
   start() {
     this.app.listen(this.port, () => {
       console.log(`Servidor rodando na porta ${this.port}`);
-      console.log(`Documentação: http://10.0.30.179:${this.port}/api-docs`);
+      console.log(`Documentação: http://172.26.28.58:${this.port}/api-docs`);
     });
   }
 }

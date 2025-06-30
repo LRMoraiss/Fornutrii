@@ -27,6 +27,22 @@ async function dbInit() {
       );
     `);
 
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS plano_alimentar (
+        id SERIAL PRIMARY KEY,
+        usuario_id TEXT REFERENCES usuario(id),
+        nome TEXT NOT NULL,
+        descricao TEXT NOT NULL,
+        duracao INTEGER NOT NULL,
+        calorias INTEGER NOT NULL,
+        objetivo TEXT,
+        proteinas_percent NUMERIC,
+        carboidratos_percent NUMERIC,
+        gorduras_percent NUMERIC,
+        restricoes TEXT
+      );
+    `);
+
     console.log('Tabelas criadas/verificadas com sucesso');
   } catch (err) {
     console.error('Erro ao criar tabelas:', err);

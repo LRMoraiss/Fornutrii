@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
-const baseURL = 'http://10.0.30.179:3000/upload/';
+const baseURL = 'http://172.26.28.58:3000/upload/';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -247,27 +247,36 @@ const styles = StyleSheet.create({
   },
 
   btn: {
-    backgroundColor: '#36A2EB',
-    paddingVertical: 10,
+    width: '100%',
+    maxWidth: 300,          
+    alignSelf: 'center',
+    backgroundColor: '#2E7D32',
+    padding: 12,            
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 16,
   },
 
   btnSecondary: {
-    backgroundColor: '#FF9800',
-    paddingVertical: 10,
+    width: '100%',
+    maxWidth: 300,          
+    alignSelf: 'center',
+    backgroundColor: '#2E7D32',
+    padding: 12,            
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,
   },
 
   logoutBtn: {
+    width: '100%',
+    maxWidth: 300,          
+    alignSelf: 'center',
     backgroundColor: '#E53935',
-    paddingVertical: 10,
+    padding: 12,            
     borderRadius: 8,
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 16,
   },
 
   btnText: {

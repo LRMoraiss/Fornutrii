@@ -3,6 +3,8 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import api from "../../services/api";
 import { colors, fonts } from '../../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default function NotificationsScreen() {
   const [notificacoes, setNotificacoes] = useState([]);
@@ -46,6 +48,14 @@ export default function NotificationsScreen() {
           <Text style={styles.emptyText}>Nenhuma notificação</Text>
         }
       />
+      
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Ionicons name="arrow-back" size={24} color={colors.primary} />
+        <Text style={styles.backButtonText}>Voltar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
