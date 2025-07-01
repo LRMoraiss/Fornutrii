@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   ScrollView,
   TouchableOpacity,
-  StyleSheet,
   Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import api from '../../services/api';
-import { colors, fonts } from '../../constants/theme';
+import api from '../../../services/api';
+import { styles } from './NovoPlanoScreen.styles'
 
 export default function NovoPlanoScreen() {
   const navigation = useNavigation();
@@ -134,49 +132,3 @@ export default function NovoPlanoScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: colors.background,
-  },
-  title: {
-    fontSize: 22,
-    fontFamily: fonts.bold,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: colors.primary
-  },
-  input: {
-    height: 40,             
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    paddingHorizontal: 12,  
-    marginBottom: 8,
-    fontSize: 16,
-    width: '100%',
-    maxWidth: 300,          
-    alignSelf: 'center',
-  },
-  button: {
-    width: '100%',
-    maxWidth: 300,          
-    alignSelf: 'center',
-    backgroundColor: '#2E7D32',
-    padding: 12,            
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  cancelButton: {
-    backgroundColor: colors.error,
-    padding: 12,            
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: colors.white,
-    fontFamily: fonts.bold,
-    fontSize: 14,          
-  },
-});

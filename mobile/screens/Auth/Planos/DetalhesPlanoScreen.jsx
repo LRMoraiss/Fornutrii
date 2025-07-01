@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import {
-  View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Ionicons from "react-native-vector-icons/Ionicons";  // Importa Ionicons
-import api from "../../services/api";
-import { colors, fonts } from "../../constants/theme";
+import { Ionicons } from '@expo/vector-icons';
+import api from "../../../services/api";
+import { colors } from "../../../constants/theme";
+import { styles } from './DetalhesPlanoScreen.styles';
 
 export default function DetalhesPlanoScreen({ route }) {
   const { planoId } = route.params;
@@ -70,44 +69,3 @@ export default function DetalhesPlanoScreen({ route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: colors.background,
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: fonts.bold,
-    color: colors.primary,
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  label: {
-    fontSize: 16,
-    fontFamily: fonts.bold,
-    marginTop: 12,
-    color: colors.primaryDark,
-  },
-  value: {
-    fontSize: 16,
-    fontFamily: fonts.regular,
-    color: colors.textDark,
-  },
-  loading: {
-    marginTop: 50,
-    textAlign: "center",
-    fontSize: 18,
-    color: colors.textLight,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 30,
-  },
-  backButtonText: {
-    fontFamily: fonts.bold,
-    fontSize: 16,
-    color: colors.success,
-    marginLeft: 8,
-  },
-});

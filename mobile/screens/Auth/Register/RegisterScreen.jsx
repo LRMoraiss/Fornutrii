@@ -4,12 +4,12 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import api from "../../services/api";
+import api from "../../../services/api";
+import { styles } from "./RegisterScreen.styles";
 
 export default function RegisterScreen() {
   const [form, setForm] = useState({
@@ -241,94 +241,3 @@ export default function RegisterScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 32, backgroundColor: "#FFFFFF" },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#2E7D32",
-    marginBottom: 24,
-    textAlign: "center", // Adicionado
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    fontSize: 16,
-    width: "100%",
-    maxWidth: 400,
-    alignSelf: "center",
-  },
-  inputError: { borderColor: "red" },
-  infoText: {
-    fontSize: 12,
-    color: "#666666",
-    marginBottom: 8,
-    maxWidth: 400,
-    width: "100%",
-    textAlign: "center",
-    alignSelf: "center",
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#333333",
-    marginTop: 16,
-    marginBottom: 12,
-    textAlign: "center",
-    alignSelf: "center",
-    maxWidth: 400,
-    width: "100%",
-  },
-  userTypeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 24,
-    width: "100%",
-    maxWidth: 400,
-    alignSelf: "center",
-  },
-  userTypeButton: {
-    flex: 1,
-    padding: 12,
-    marginHorizontal: 4,
-    borderWidth: 1,
-    borderColor: "#DDDDDD",
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  selectedUserType: {
-    backgroundColor: "#E8F5E9",
-    borderColor: "#2E7D32",
-  },
-  userTypeText: { color: "#333333" },
-  primaryButton: {
-    width: "100%",
-    maxWidth: 400,
-    alignSelf: "center",
-    backgroundColor: "#2E7D32",
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  buttonText: { color: "#FFFFFF", fontWeight: "bold", fontSize: 16 },
-  secondaryButtonText: {
-    color: "#2E7D32",
-    fontWeight: "bold",
-    textAlign: "center", // Adicionado
-    marginTop: 8, // Opcional para distanciar do botão
-  },
-  passwordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-    alignSelf: "center",
-    width: "100%",
-    maxWidth: 400,
-  },
-  passwordInput: { marginRight: 8 },
-});

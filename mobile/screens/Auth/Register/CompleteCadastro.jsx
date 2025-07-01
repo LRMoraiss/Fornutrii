@@ -3,7 +3,6 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   Alert,
   ScrollView,
   KeyboardAvoidingView,
@@ -14,6 +13,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { styles } from './CompleteCadastro.styles';
 
 const API_URL = 'http://172.26.28.58:3000'; // ou use process.env.API_URL
 
@@ -216,74 +216,3 @@ export default function CompleteCadastro() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F5F5' },
-  scrollContainer: { padding: 20, paddingBottom: 40 },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  label: { 
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 8,
-    maxWidth: 400,
-    width: '100%',
-    textAlign: 'center',
-    alignSelf: 'center',
- },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#DDDDDD',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    fontSize: 16,
-    width: '100%',
-    maxWidth: 400,       
-    alignSelf: 'center',
-  },
-  fotoButton: {
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-    backgroundColor: '#2E7D32',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  fotoButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  fotoPreview: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    alignSelf: 'center',
-    marginBottom: 16,
-    borderWidth: 2,
-    borderColor: '#2E7D32',
-  },
-  saveButton: {
-    width: '100%',
-    maxWidth: 400,
-    alignSelf: 'center',
-    backgroundColor: '#2E7D32',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  saveButtonText: {
-    color: '#FFF',
-    fontWeight: 'bold',
-    fontSize: 18,
-  },
-});
