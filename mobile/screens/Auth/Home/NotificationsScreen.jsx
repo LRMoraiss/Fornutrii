@@ -1,8 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import api from "../../services/api";
-import { colors, fonts } from '../../constants/theme';
+import api from "../../../services/api";
+import { colors } from '../../../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { styles } from './NotificationsScreen.styles';
+
 
 export default function NotificationsScreen() {
   const [notificacoes, setNotificacoes] = useState([]);
@@ -46,39 +49,14 @@ export default function NotificationsScreen() {
           <Text style={styles.emptyText}>Nenhuma notificação</Text>
         }
       />
+      
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <Ionicons name="arrow-back" size={24} color={colors.primary} />
+        <Text style={styles.backButtonText}>Voltar</Text>
+      </TouchableOpacity>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: colors.background,
-    flex: 1,
-  },
-  card: {
-    backgroundColor: colors.white,
-    padding: 15,
-    marginTop: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  title: {
-    fontSize: 18,
-    fontFamily: fonts.bold,
-    color: colors.primary,
-    marginBottom: 5,
-  },
-  text: {
-    fontSize: 16,
-    fontFamily: fonts.regular,
-    color: colors.textDark,
-  },
-  emptyText: {
-    textAlign: 'center',
-    fontFamily: fonts.regular,
-    color: colors.textLight,
-    marginTop: 20,
-  },
-});
