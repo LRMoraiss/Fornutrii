@@ -1,120 +1,174 @@
 import { StyleSheet } from 'react-native';
+
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 20,
   },
-
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 25,
   },
-
+  avatarWrapper: {
+  width: 60,
+  height: 60,
+  borderRadius: 30,
+  overflow: 'hidden',
+  justifyContent: 'center',
+  alignItems: 'center',
+},
+avatar: {
+  width: '100%',
+  height: '100%',
+},
+avatarFallback: {
+  width: '100%',
+  height: '100%',
+  backgroundColor: '#2E7D32',
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderRadius: 30,
+},
   userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    marginLeft: 15,
   },
-
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    marginRight: 10,
+  greetingText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
   },
-
-  username: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  subGreeting: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
   },
-
-  location: {
+  cardsContainer: {
+    marginBottom: 20,
+  },
+  activityCard: {
+    width: 140,
+    padding: 15,
+    borderRadius: 12,
+    marginRight: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  activityCardTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginTop: 10,
+    color: '#333',
+  },
+  activityCardValue: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 5,
+    color: '#222',
+  },
+  activityCardPercent: {
     fontSize: 13,
-    color: '#777',
+    color: '#666',
+    marginTop: 5,
   },
-
-  sectionTitle: {
+  goalItem: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  goalTitle: {
     fontSize: 16,
     fontWeight: '600',
-    marginVertical: 10,
+    marginBottom: 8,
+    color: '#333',
   },
-
-  graphStyle: {
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-
-  waterRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 10,
-  },
-
-  waterCup: {
-    width: 22,
-    height: 44,
-    backgroundColor: '#36A2EB',
-    borderRadius: 5,
-  },
-
   progressBar: {
     height: 8,
     borderRadius: 4,
     marginTop: 5,
     backgroundColor: '#E0E0E0',
   },
-
   kcalText: {
-    fontSize: 13,
+    fontSize: 15,
     color: '#555',
-    marginBottom: 16,
+    marginTop: 8,
+    textAlign: 'center',
   },
-
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginVertical: 10,
+    color: '#333',
+  },
+  graphStyle: {
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  waterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  waterCup: {
+    width: 22,
+    height: 44,
+    backgroundColor: '#36A2EB',
+    borderRadius: 5,
+  },
+  buttonsContainer: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
   btn: {
     width: '100%',
-    maxWidth: 300,          
-    alignSelf: 'center',
     backgroundColor: '#2E7D32',
-    padding: 12,            
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 15,
   },
-
   btnSecondary: {
     width: '100%',
-    maxWidth: 300,          
-    alignSelf: 'center',
-    backgroundColor: '#2E7D32',
-    padding: 12,            
-    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#2E7D32',
+    padding: 16,
+    borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 15,
   },
-
-  logoutBtn: {
-    width: '100%',
-    maxWidth: 300,          
-    alignSelf: 'center',
-    backgroundColor: '#E53935',
-    padding: 12,            
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-
   btnText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
   },
-
+  btnSecondaryText: {
+    color: '#2E7D32',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  logoutBtn: {
+    width: '100%',
+    backgroundColor: '#E53935',
+    padding: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
   logoutText: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
   },
 });
