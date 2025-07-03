@@ -161,7 +161,3 @@ http://SEU_IP_LOCAL:3000/api-docs
 - Interface amigável e responsiva
 
 ---
-
-## 🧑‍💻 Desenvolvido por
-
-João Oliveira – [TCE Ceará](mailto:joao.oliveira@tce.ce.gov.br)
