@@ -17,7 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CircularProgress from "react-native-circular-progress-indicator";
 
 const screenWidth = Dimensions.get("window").width;
-const baseURL = "http://172.26.28.58:3000/upload/";
+const baseURL = "http://10.0.30.106:3000/upload/";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
