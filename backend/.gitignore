@@ -1,0 +1,57 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.env
+
+# Build
+dist/
+build/
+tmp/
+temp/
+.cache/
+.expo/
+.expo-shared/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+
+# Expo / React Native
+*.expo
+*.apk
+*.keystore
+*.xcworkspace
+*.xcodeproj
+*.pbxproj
+
+android/app/build/
+android/.gradle/
+android/.idea/
+android/local.properties
+
+ios/Pods/
+ios/Podfile.lock
+ios/Podfile~
+
+metro-cache/
+__generated__/
+
+coverage/
+jest-coverage/
+
+*.tgz
+*.tar.gz
+
+*.db
+
+swagger-output.json
