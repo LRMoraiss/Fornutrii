@@ -89,7 +89,7 @@ class Server {
   start() {
     this.app.listen(this.port, () => {
       console.log(`Servidor rodando na porta ${this.port}`);
-      console.log(`Documentação: http://172.26.28.58:${this.port}/api-docs`);
+      console.log(`Documentação: http://10.0.30.106:${this.port}/api-docs`);
     });
   }
 }
